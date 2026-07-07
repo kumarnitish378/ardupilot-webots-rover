@@ -1,0 +1,9 @@
+# Build artifacts
+build/
+*.o
+*.d
+*.exe
+
+# Runtime logs
+*.log
+ugv_teleop_log.csv

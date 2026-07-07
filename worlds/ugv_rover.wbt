@@ -1,0 +1,634 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+  title "ugv_rover"
+  # Halved from 16ms: the chassis -> suspension -> lightweight steering-knuckle
+  # -> wheel joint chain is numerically stiff once real rolling/contact forces
+  # are involved (a light knuckle sandwiched between much heavier bodies), and
+  # 16ms let the solver occasionally lose the steering joint's stop constraint
+  # for a single step before self-correcting. More sub-steps fixes that.
+  basicTimeStep 8
+  contactProperties [
+    ContactProperties {
+      material1 "wheel"
+      material2 "floor"
+      # Single isotropic value: with front-wheel steering + a driven rear axle,
+      # turning comes from the steering angle, not lateral wheel scrub, so the
+      # anisotropic (skid-steer) friction split is no longer needed.
+      coulombFriction [2.5]
+      bounce 0.0
+      softCFM 0.0001
+    }
+  ]
+}
+# Coordinate system: ENU (default for new R2025a worlds) -> X = forward, Y = left, Z = up.
+# Camera / DistanceSensor default "forward" axis is +X, so no extra rotation is needed
+# to make them look ahead of the chassis.
+Viewpoint {
+  orientation -0.262 0.0796 0.9616 2.575
+  position 3.0 -3.0 2.2
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 10 10
+  floorTileSize 1 1
+  wallHeight 0.1
+  contactMaterial "floor"
+}
+Robot {
+  translation 0 0 0.155
+  rotation 0 0 1 0
+  name "ugv_rover"
+  controller "ugv_teleop"
+  children [
+    # Main chassis - kept narrower than the wheel track/wheelbase so the wheels
+    # sit clearly outboard of the body (common on real skid-steer UGVs) instead
+    # of clipping into the box corners.
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.36 0.38 0.30
+        roughness 0.7
+        metalness 0.1
+      }
+      geometry Box {
+        size 0.28 0.18 0.15
+      }
+    }
+    # Front sensor pod (camera housing) - simplified stand-in for the diagram's gimbal pod
+    # NOTE: Shape has no translation/rotation fields - decorative parts must be
+    # wrapped in a Transform to be positioned off-center.
+    Transform {
+      translation 0.16 0 0.115
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.08 0.08 0.08
+            roughness 0.5
+            metalness 0.3
+          }
+          geometry Box {
+            size 0.1 0.12 0.08
+          }
+        }
+      ]
+    }
+    # Payload / "SENS module" cases on the deck (visual only, per top-down layout)
+    Transform {
+      translation -0.02 0.045 0.095
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.07 0.07 0.04
+          }
+        }
+      ]
+    }
+    Transform {
+      translation -0.02 -0.045 0.095
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.07 0.07 0.04
+          }
+        }
+      ]
+    }
+    Transform {
+      translation -0.10 0.045 0.095
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.07 0.07 0.04
+          }
+        }
+      ]
+    }
+    Transform {
+      translation -0.10 -0.045 0.095
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.07 0.07 0.04
+          }
+        }
+      ]
+    }
+    # Communication mast (2 antennas), rear of the deck
+    Transform {
+      translation -0.11 0.03 0.185
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.05 0.05 0.05
+            roughness 0.4
+            metalness 0.5
+          }
+          geometry Cylinder {
+            radius 0.004
+            height 0.22
+          }
+        }
+      ]
+    }
+    Transform {
+      translation -0.11 -0.03 0.165
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.05 0.05 0.05
+            roughness 0.4
+            metalness 0.5
+          }
+          geometry Cylinder {
+            radius 0.004
+            height 0.18
+          }
+        }
+      ]
+    }
+    # --- Wheel FL: suspension (SliderJoint) + steering knuckle (HingeJoint, vertical
+    # axis) + free-rolling wheel (HingeJoint with no motor, so it just rolls with
+    # ground contact instead of being separately driven) ---
+    SliderJoint {
+      jointParameters JointParameters {
+        axis 0 0 1
+        minStop -0.02
+        maxStop 0.02
+        springConstant 2000
+        dampingConstant 80
+      }
+      endPoint DEF WHEEL_FL_CARRIER Solid {
+        translation 0.2 0.15 -0.095
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.05 0.03 0.02
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 0 1
+              anchor 0 0 0
+              minStop -0.575
+              maxStop 0.575
+            }
+            device [
+              RotationalMotor {
+                name "steer_fl"
+                maxVelocity 2
+                # Raised from 8: needs enough authority to hold the commanded
+                # angle against real rolling/contact forces at speed, not just
+                # against gravity while stationary.
+                maxTorque 15
+                # Default controlPID (10 0 0) has no damping, which overshoots
+                # and oscillates against this knuckle's small inertia. Lower P,
+                # add D to settle at the target angle instead of hunting.
+                controlPID 6 0 0.6
+              }
+              PositionSensor {
+                name "steer_fl_sensor"
+              }
+            ]
+            endPoint DEF WHEEL_FL_KNUCKLE Solid {
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.2 0.2
+                    roughness 0.8
+                    metalness 0.3
+                  }
+                  geometry Box {
+                    size 0.02 0.02 0.03
+                  }
+                }
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                    axis 0 1 0
+                    # 2 cm forward of the steering axis = trail/caster offset:
+                    # the wheel contact patch is ahead of the kingpin axis, the
+                    # same geometric trick real cars use to make a rolling wheel
+                    # self-center instead of shimmy. Anchor and endPoint
+                    # translation must match (see other wheels' convention).
+                    anchor 0.02 0 0
+                  }
+                  endPoint DEF WHEEL_FL Solid {
+                    translation 0.02 0 0
+                    rotation 1 0 0 1.5708
+                    children [
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.05 0.05 0.05
+                          roughness 1
+                          metalness 0
+                        }
+                        geometry Cylinder {
+                          radius 0.06
+                          height 0.05
+                        }
+                      }
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 1 1 1
+                          roughness 0.4
+                          metalness 0
+                        }
+                        geometry Box {
+                          size 0.11 0.015 0.052
+                        }
+                      }
+                    ]
+                    name "wheel_fl"
+                    contactMaterial "wheel"
+                    boundingObject Cylinder {
+                      radius 0.06
+                      height 0.05
+                    }
+                    physics Physics {
+                      density -1
+                      mass 0.45
+                    }
+                  }
+                }
+              ]
+              name "wheel_fl_knuckle"
+              boundingObject Box {
+                size 0.02 0.02 0.03
+              }
+              physics Physics {
+                density -1
+                # Raised from 0.1: a knuckle this light next to a 6.8 kg chassis
+                # is a ~70:1 mass ratio in one joint chain, which is numerically
+                # stiff for the solver. Closer to its neighbors' mass is more stable.
+                mass 0.25
+              }
+            }
+          }
+        ]
+        name "wheel_fl_carrier"
+        boundingObject Box {
+          size 0.05 0.03 0.02
+        }
+        physics Physics {
+          density -1
+          mass 0.3
+        }
+      }
+    }
+    # --- Wheel FR (mirrors FL) ---
+    SliderJoint {
+      jointParameters JointParameters {
+        axis 0 0 1
+        minStop -0.02
+        maxStop 0.02
+        springConstant 2000
+        dampingConstant 80
+      }
+      endPoint DEF WHEEL_FR_CARRIER Solid {
+        translation 0.2 -0.15 -0.095
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.05 0.03 0.02
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 0 1
+              anchor 0 0 0
+              minStop -0.575
+              maxStop 0.575
+            }
+            device [
+              RotationalMotor {
+                name "steer_fr"
+                maxVelocity 2
+                maxTorque 15
+                controlPID 6 0 0.6
+              }
+              PositionSensor {
+                name "steer_fr_sensor"
+              }
+            ]
+            endPoint DEF WHEEL_FR_KNUCKLE Solid {
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.2 0.2
+                    roughness 0.8
+                    metalness 0.3
+                  }
+                  geometry Box {
+                    size 0.02 0.02 0.03
+                  }
+                }
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                    axis 0 1 0
+                    anchor 0.02 0 0
+                  }
+                  endPoint DEF WHEEL_FR Solid {
+                    translation 0.02 0 0
+                    rotation 1 0 0 1.5708
+                    children [
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.05 0.05 0.05
+                          roughness 1
+                          metalness 0
+                        }
+                        geometry Cylinder {
+                          radius 0.06
+                          height 0.05
+                        }
+                      }
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 1 1 1
+                          roughness 0.4
+                          metalness 0
+                        }
+                        geometry Box {
+                          size 0.11 0.015 0.052
+                        }
+                      }
+                    ]
+                    name "wheel_fr"
+                    contactMaterial "wheel"
+                    boundingObject Cylinder {
+                      radius 0.06
+                      height 0.05
+                    }
+                    physics Physics {
+                      density -1
+                      mass 0.45
+                    }
+                  }
+                }
+              ]
+              name "wheel_fr_knuckle"
+              boundingObject Box {
+                size 0.02 0.02 0.03
+              }
+              physics Physics {
+                density -1
+                mass 0.25
+              }
+            }
+          }
+        ]
+        name "wheel_fr_carrier"
+        boundingObject Box {
+          size 0.05 0.03 0.02
+        }
+        physics Physics {
+          density -1
+          mass 0.3
+        }
+      }
+    }
+    # --- Wheel RL ---
+    SliderJoint {
+      jointParameters JointParameters {
+        axis 0 0 1
+        minStop -0.02
+        maxStop 0.02
+        springConstant 2000
+        dampingConstant 80
+      }
+      endPoint DEF WHEEL_RL_CARRIER Solid {
+        translation -0.2 0.15 -0.095
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.05 0.03 0.02
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 1 0
+              anchor 0 0 0
+            }
+            device [
+              RotationalMotor {
+                name "wheel_rl"
+                maxVelocity 15
+                maxTorque 10
+              }
+            ]
+            endPoint DEF WHEEL_RL Solid {
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.05 0.05 0.05
+                    roughness 1
+                    metalness 0
+                  }
+                  geometry Cylinder {
+                    radius 0.06
+                    height 0.05
+                  }
+                }
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 1 1 1
+                    roughness 0.4
+                    metalness 0
+                  }
+                  geometry Box {
+                    size 0.11 0.015 0.052
+                  }
+                }
+              ]
+              name "wheel_rl"
+              contactMaterial "wheel"
+              boundingObject Cylinder {
+                radius 0.06
+                height 0.05
+              }
+              physics Physics {
+                density -1
+                mass 0.45
+              }
+            }
+          }
+        ]
+        name "wheel_rl_carrier"
+        boundingObject Box {
+          size 0.05 0.03 0.02
+        }
+        physics Physics {
+          density -1
+          mass 0.3
+        }
+      }
+    }
+    # --- Wheel RR ---
+    SliderJoint {
+      jointParameters JointParameters {
+        axis 0 0 1
+        minStop -0.02
+        maxStop 0.02
+        springConstant 2000
+        dampingConstant 80
+      }
+      endPoint DEF WHEEL_RR_CARRIER Solid {
+        translation -0.2 -0.15 -0.095
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.05 0.03 0.02
+            }
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0 1 0
+              anchor 0 0 0
+            }
+            device [
+              RotationalMotor {
+                name "wheel_rr"
+                maxVelocity 15
+                maxTorque 10
+              }
+            ]
+            endPoint DEF WHEEL_RR Solid {
+              rotation 1 0 0 1.5708
+              children [
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 0.05 0.05 0.05
+                    roughness 1
+                    metalness 0
+                  }
+                  geometry Cylinder {
+                    radius 0.06
+                    height 0.05
+                  }
+                }
+                Shape {
+                  appearance PBRAppearance {
+                    baseColor 1 1 1
+                    roughness 0.4
+                    metalness 0
+                  }
+                  geometry Box {
+                    size 0.11 0.015 0.052
+                  }
+                }
+              ]
+              name "wheel_rr"
+              contactMaterial "wheel"
+              boundingObject Cylinder {
+                radius 0.06
+                height 0.05
+              }
+              physics Physics {
+                density -1
+                mass 0.45
+              }
+            }
+          }
+        ]
+        name "wheel_rr_carrier"
+        boundingObject Box {
+          size 0.05 0.03 0.02
+        }
+        physics Physics {
+          density -1
+          mass 0.3
+        }
+      }
+    }
+    Camera {
+      translation 0.25 0 0.115
+      name "camera"
+      width 640
+      height 480
+    }
+    GPS {
+      name "gps"
+    }
+    InertialUnit {
+      name "imu"
+    }
+    Gyro {
+      name "gyro"
+    }
+    Accelerometer {
+      name "accel"
+    }
+    DistanceSensor {
+      translation 0.15 0.06 0
+      rotation 0 0 1 0.3
+      name "ds_left"
+      lookupTable [
+        0 0 0
+        3 3 0
+      ]
+    }
+    DistanceSensor {
+      translation 0.15 -0.06 0
+      rotation 0 0 1 -0.3
+      name "ds_right"
+      lookupTable [
+        0 0 0
+        3 3 0
+      ]
+    }
+  ]
+  boundingObject Box {
+    size 0.28 0.18 0.15
+  }
+  physics Physics {
+    density -1
+    mass 6.5
+  }
+}
