@@ -21,6 +21,12 @@
  *                Sensor reading and motor writing are kept in their own
  *                functions so the keyboard layer can later be swapped for
  *                an ArduPilot SITL socket bridge without touching the rest.
+ *
+ *                The CSV log carries the full rover state every step (not
+ *                just steering/wheel speed) so events like driving into an
+ *                obstacle and getting stuck show up as a frozen pos/heading
+ *                trace, not just something you had to catch live in the
+ *                console.
  */
 
 #include <webots/robot.h>
@@ -60,6 +66,13 @@ typedef struct {
   WbDeviceTag steer_fl_sensor;
   WbDeviceTag steer_fr_sensor;
 } Sensors;
+
+typedef struct {
+  double pos[3];
+  double heading_deg;
+  double ds_left;
+  double ds_right;
+} RoverState;
 
 static void motors_init(Motors *m) {
   m->steer_fl = wb_robot_get_device("steer_fl");
@@ -152,6 +165,19 @@ static void mix_ackermann_differential(double wheel_speed, double steer_angle, d
   *right_speed = wheel_speed * (turn_radius + TRACK_WIDTH / 2.0) / turn_radius;
 }
 
+static void read_rover_state(const Sensors *s, RoverState *state) {
+  const double *pos = wb_gps_get_values(s->gps);
+  state->pos[0] = pos[0];
+  state->pos[1] = pos[1];
+  state->pos[2] = pos[2];
+
+  const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(s->imu);
+  state->heading_deg = rpy[2] * RAD2DEG;  // yaw about Z (up) in this ENU world
+
+  state->ds_left = wb_distance_sensor_get_value(s->ds_left);
+  state->ds_right = wb_distance_sensor_get_value(s->ds_right);
+}
+
 static void motors_write(const Motors *m, double left_speed, double right_speed, double steer_angle) {
   wb_motor_set_velocity(m->wheel_rl, left_speed);
   wb_motor_set_velocity(m->wheel_rr, right_speed);
@@ -163,33 +189,30 @@ static void motors_write(const Motors *m, double left_speed, double right_speed,
 static FILE *log_open(void) {
   FILE *f = fopen("ugv_teleop_log.csv", "w");
   if (f != NULL) {
-    fprintf(f, "time_s,steer_cmd_deg,steer_fl_actual_deg,steer_fr_actual_deg,wheel_rl_speed_rad_s,wheel_rr_speed_rad_s\n");
+    fprintf(f,
+            "time_s,pos_x,pos_y,pos_z,heading_deg,ds_left_m,ds_right_m,"
+            "steer_cmd_deg,steer_fl_actual_deg,steer_fr_actual_deg,wheel_rl_speed_rad_s,wheel_rr_speed_rad_s\n");
     fflush(f);
   }
   return f;
 }
 
-static void log_write(FILE *f, double time_s, double steer_cmd_deg, double steer_fl_deg, double steer_fr_deg,
-                       double wheel_rl_speed, double wheel_rr_speed) {
+static void log_write(FILE *f, double time_s, const RoverState *state, double steer_cmd_deg, double steer_fl_deg,
+                       double steer_fr_deg, double wheel_rl_speed, double wheel_rr_speed) {
   if (f == NULL)
     return;
-  fprintf(f, "%.3f,%.2f,%.2f,%.2f,%.3f,%.3f\n", time_s, steer_cmd_deg, steer_fl_deg, steer_fr_deg, wheel_rl_speed,
-          wheel_rr_speed);
+  fprintf(f, "%.3f,%.3f,%.3f,%.3f,%.1f,%.2f,%.2f,%.2f,%.2f,%.2f,%.3f,%.3f\n", time_s, state->pos[0], state->pos[1],
+          state->pos[2], state->heading_deg, state->ds_left, state->ds_right, steer_cmd_deg, steer_fl_deg, steer_fr_deg,
+          wheel_rl_speed, wheel_rr_speed);
 }
 
-static void print_status(const Sensors *s, double steer_cmd_deg, double steer_fl_deg, double steer_fr_deg,
+static void print_status(const RoverState *state, double steer_cmd_deg, double steer_fl_deg, double steer_fr_deg,
                           double wheel_rl_speed, double wheel_rr_speed) {
-  const double *pos = wb_gps_get_values(s->gps);
-  const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(s->imu);
-  double heading_deg = rpy[2] * RAD2DEG;  // yaw about Z (up) in this ENU world
-  double ds_left = wb_distance_sensor_get_value(s->ds_left);
-  double ds_right = wb_distance_sensor_get_value(s->ds_right);
-
   printf(
       "pos=(%.2f, %.2f, %.2f) m  heading=%.1f deg  ds_left=%.2f m  ds_right=%.2f m\n"
       "  steer_cmd=%.1f deg  steer_fl=%.1f deg  steer_fr=%.1f deg  wheel_rl=%.2f rad/s  wheel_rr=%.2f rad/s\n",
-      pos[0], pos[1], pos[2], heading_deg, ds_left, ds_right, steer_cmd_deg, steer_fl_deg, steer_fr_deg, wheel_rl_speed,
-      wheel_rr_speed);
+      state->pos[0], state->pos[1], state->pos[2], state->heading_deg, state->ds_left, state->ds_right, steer_cmd_deg,
+      steer_fl_deg, steer_fr_deg, wheel_rl_speed, wheel_rr_speed);
   fflush(stdout);
 }
 
@@ -228,12 +251,15 @@ int main(int argc, char **argv) {
     double steer_fr_actual_deg = wb_position_sensor_get_value(sensors.steer_fr_sensor) * RAD2DEG;
     double steer_cmd_deg = steer_angle * RAD2DEG;
 
-    log_write(log_file, wb_robot_get_time(), steer_cmd_deg, steer_fl_actual_deg, steer_fr_actual_deg, left_speed,
-              right_speed);
+    RoverState state;
+    read_rover_state(&sensors, &state);
+
+    log_write(log_file, wb_robot_get_time(), &state, steer_cmd_deg, steer_fl_actual_deg, steer_fr_actual_deg,
+              left_speed, right_speed);
 
     since_last_print_ms += TIME_STEP;
     if (since_last_print_ms >= PRINT_PERIOD_MS) {
-      print_status(&sensors, steer_cmd_deg, steer_fl_actual_deg, steer_fr_actual_deg, left_speed, right_speed);
+      print_status(&state, steer_cmd_deg, steer_fl_actual_deg, steer_fr_actual_deg, left_speed, right_speed);
       since_last_print_ms = 0;
     }
   }

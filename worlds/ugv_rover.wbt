@@ -3,6 +3,7 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/rocks/protos/Rock.proto"
 
 WorldInfo {
   title "ugv_rover"
@@ -23,6 +24,15 @@ WorldInfo {
       bounce 0.0
       softCFM 0.0001
     }
+    ContactProperties {
+      # Rocks use the "default" contactMaterial. Their mesh is an irregular
+      # bumpy surface, so a wheel resting against one can generate more than
+      # the engine's default cap of 10 contact points (we saw 11) - raising
+      # maxContactJoints here stops it from silently dropping the deepest ones.
+      material1 "wheel"
+      material2 "default"
+      maxContactJoints 20
+    }
   ]
 }
 # Coordinate system: ENU (default for new R2025a worlds) -> X = forward, Y = left, Z = up.
@@ -41,6 +51,167 @@ RectangleArena {
   floorTileSize 1 1
   wallHeight 0.1
   contactMaterial "floor"
+}
+# Small static obstacles (no physics needed - Rock's default physics is NULL,
+# so it behaves as a fixed obstacle) for distance-sensor and rough-driving tests.
+Rock {
+  translation 1.5 0 0
+  name "rock_ahead"
+}
+Rock {
+  translation 1.2 -0.9 0
+  rotation 0 0 1 0.8
+  name "rock_side"
+  scale 1.3
+}
+Rock {
+  translation -1.3 1.0 0
+  rotation 0 0 1 2.1
+  name "rock_small"
+  scale 0.7
+}
+# 20 more rocks scattered across the arena, randomized position/rotation/scale
+# (scale 0.5-2.0, mix of "regular"/"flat" types), kept clear of the rover's
+# start and the 3 hand-placed rocks above, and clear of each other.
+Rock {
+  translation 1.23 -4.18 0
+  rotation 0 0 1 1.402
+  name "rock_1"
+  scale 0.91
+  type "regular"
+}
+Rock {
+  translation 1.55 3.45 0
+  rotation 0 0 1 2.651
+  name "rock_2"
+  scale 0.63
+  type "flat"
+}
+Rock {
+  translation -2.48 0.05 0
+  rotation 0 0 1 1.249
+  name "rock_3"
+  scale 0.54
+  type "regular"
+}
+Rock {
+  translation 0.40 -2.46 0
+  rotation 0 0 1 5.086
+  name "rock_4"
+  scale 1.38
+  type "flat"
+}
+Rock {
+  translation 2.69 1.74 0
+  rotation 0 0 1 0.977
+  name "rock_5"
+  scale 1.01
+  type "regular"
+}
+Rock {
+  translation -1.44 -3.58 0
+  rotation 0 0 1 5.325
+  name "rock_6"
+  scale 0.65
+  type "regular"
+}
+Rock {
+  translation 0.32 4.16 0
+  rotation 0 0 1 3.469
+  name "rock_7"
+  scale 1.07
+  type "regular"
+}
+Rock {
+  translation 1.04 3.18 0
+  rotation 0 0 1 4.427
+  name "rock_8"
+  scale 1.37
+  type "flat"
+}
+Rock {
+  translation -2.39 -1.85 0
+  rotation 0 0 1 1.463
+  name "rock_9"
+  scale 0.62
+  type "flat"
+}
+Rock {
+  translation -1.95 1.19 0
+  rotation 0 0 1 2.326
+  name "rock_10"
+  scale 1.05
+  type "flat"
+}
+Rock {
+  translation -2.05 3.84 0
+  rotation 0 0 1 3.827
+  name "rock_11"
+  scale 1.47
+  type "flat"
+}
+Rock {
+  translation 2.02 -2.96 0
+  rotation 0 0 1 6.217
+  name "rock_12"
+  scale 1.07
+  type "regular"
+}
+Rock {
+  translation 0.50 1.62 0
+  rotation 0 0 1 4.876
+  name "rock_13"
+  scale 1.76
+  type "flat"
+}
+Rock {
+  translation -4.12 -1.62 0
+  rotation 0 0 1 1.326
+  name "rock_14"
+  scale 0.9
+  type "regular"
+}
+Rock {
+  translation 3.31 -1.63 0
+  rotation 0 0 1 2.486
+  name "rock_15"
+  scale 1.48
+  type "regular"
+}
+Rock {
+  translation -0.36 -2.07 0
+  rotation 0 0 1 3.527
+  name "rock_16"
+  scale 0.87
+  type "regular"
+}
+Rock {
+  translation -0.89 -2.47 0
+  rotation 0 0 1 3.201
+  name "rock_17"
+  scale 2.0
+  type "flat"
+}
+Rock {
+  translation -3.99 -3.44 0
+  rotation 0 0 1 4.977
+  name "rock_18"
+  scale 1.44
+  type "regular"
+}
+Rock {
+  translation -3.84 -1.04 0
+  rotation 0 0 1 3.325
+  name "rock_19"
+  scale 1.99
+  type "regular"
+}
+Rock {
+  translation 3.17 -4.30 0
+  rotation 0 0 1 4.283
+  name "rock_20"
+  scale 1.58
+  type "regular"
 }
 Robot {
   translation 0 0 0.155
