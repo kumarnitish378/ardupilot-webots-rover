@@ -65,32 +65,35 @@
 #include <stdio.h>
 
 #define TIME_STEP 16
-#define MAX_WHEEL_SPEED 8.0   // rad/s, rear drive wheels (motors' maxVelocity is 15)
-#define MAX_STEER_ANGLE 0.575  // rad (~33 deg, i.e. the old 23 deg + 10), matches the front HingeJoints' minStop/maxStop
+#define MAX_WHEEL_SPEED 8.0   // rad/s; with the 0.229 m (18 in) wheels this is ~1.8 m/s
+#define MAX_STEER_ANGLE 0.575  // rad (~33 deg), matches the front HingeJoints' minStop/maxStop
 #define PRINT_PERIOD_MS 1000
 #define RAD2DEG (180.0 / M_PI)
 
-// Must match the wheel anchor positions in ugv_rover.wbt: front anchors at
-// x=+-0.2 and rear at x=-0.2 -> wheelbase 0.4; left/right anchors at
-// y=+-0.15 -> track 0.3.
-#define WHEELBASE 0.4
-#define TRACK_WIDTH 0.3
+// Must match the wheel anchor positions in the .wbt: front anchors at x=+-0.60
+// and rear at x=-0.60 -> wheelbase 1.20; left/right anchors at y=+-0.52 ->
+// track 1.04 (scaled rover: 1.83 x 1.22 x 0.61 m body, 18 in wheels).
+#define WHEELBASE 1.20
+#define TRACK_WIDTH 1.10
 
-// Autonomous obstacle-avoidance thresholds, in meters (ds_left/ds_right read
-// distance directly, up to their 3 m max range - see the .wbt lookupTable).
-#define OBSTACLE_NEAR_M 0.6   // start steering away from the closer side
-#define OBSTACLE_STOP_M 0.25  // too close on both sides - reverse and turn instead
+// Autonomous obstacle-avoidance thresholds, in meters. Scaled up for the
+// ~1.8 m-long vehicle and the 8 m sensor range: the old 0.25 m stop distance
+// was shorter than the vehicle itself.
+#define OBSTACLE_NEAR_M 2.5   // start steering away from the closer side
+#define OBSTACLE_STOP_M 1.2   // too close on both sides - reverse and turn instead
 
-#define RADAR_MAX_RANGE 3.0  // must match maxRange on the corner Radar nodes in the .wbt
+#define RADAR_MAX_RANGE 8.0  // must match maxRange on the corner Radar nodes in the .wbt
 
-// Stuck detection: distance-sensor thresholds alone don't catch "wedged
-// against/on top of an obstacle and spinning without actually moving" (the
-// steering-joint/rock incident) - a rock's irregular mesh can grab a wheel
-// without ever showing up as "too close" on either sensor. So we also track
-// actual GPS displacement over a rolling window and force a recovery
-// maneuver if it isn't moving despite trying to drive.
-#define STUCK_CHECK_PERIOD_S 1.0   // how often to sample position
-#define STUCK_DISPLACEMENT_M 0.05  // moved less than this while driving = stuck
+// Stuck detection: range thresholds alone don't catch "wedged against
+// something and not actually moving". We use the GPS's own speed reading
+// (wb_gps_get_speed, m/s) rather than integrating position, because in the
+// OSM world the GPS is in WGS84 mode and returns lat/lon *degrees* - the old
+// position-displacement check compared those tiny degree deltas to a metre
+// threshold and so ALWAYS read "stuck", trapping the rover in perpetual
+// recovery even on completely open ground. Speed in m/s is the same in both
+// coordinate systems, so this works in the arena and the real-map world.
+#define STUCK_CHECK_PERIOD_S 1.2   // must be commanding drive but slow this long to count as stuck
+#define STUCK_SPEED_M_S 0.15       // below this ground speed (while trying to drive) = not moving
 
 // Recovery commitment: logged evidence of the failure mode this fixes -
 // re-deciding "reverse or not" fresh every 16ms step let the rover chatter
@@ -109,6 +112,16 @@
 #define RECOVERY_ESCALATION_WINDOW_S 6.0  // re-stuck within this long after a recovery counts as still-stuck
 
 #define COMMAND_FILE "rover_command.txt"
+
+// Steering PID auto-tune (relay-feedback / Astrom-Hagglund method), triggered
+// by the 'T' key. The steering motor is briefly switched to torque control
+// and driven with a relay (bang-bang) around zero; the resulting limit-cycle
+// amplitude a and period Tu give the ultimate gain Ku = 4*d/(pi*a), from
+// which Ziegler-Nichols yields P/I/D. The tuned gains are applied live via
+// wb_motor_set_control_pid() to both steering motors and printed.
+#define AUTOTUNE_RELAY_TORQUE 250.0  // N*m relay amplitude: above standstill tyre scrub, well under 2000 N*m maxTorque
+#define AUTOTUNE_MAX_S 12.0          // give up if no clean limit cycle by now
+#define AUTOTUNE_CYCLES 6            // measure this many half-cycles before computing gains
 
 typedef enum { MODE_MANUAL, MODE_AUTONOMOUS, MODE_REMOTE } DriveMode;
 
@@ -146,6 +159,7 @@ typedef struct {
 typedef struct {
   double pos[3];
   double heading_deg;
+  double speed;  // GPS ground speed (m/s), coordinate-system independent
   double ds_left;
   double ds_right;
   double radar_fl;
@@ -155,28 +169,23 @@ typedef struct {
 } RoverState;
 
 typedef struct {
-  int initialized;
-  double last_check_time;
-  double last_check_pos[2];
-
   int in_recovery;
   double recovery_until_time;
   double recovery_steer_sign;
 
   int consecutive_recoveries;
   double last_recovery_end_time;
+
+  double low_speed_since;  // time we first went slow while trying to drive; -1 = not currently
 } AutonomousState;
 
 static void autonomous_state_init(AutonomousState *as) {
-  as->initialized = 0;
-  as->last_check_time = 0.0;
-  as->last_check_pos[0] = 0.0;
-  as->last_check_pos[1] = 0.0;
   as->in_recovery = 0;
   as->recovery_until_time = -1.0;
   as->recovery_steer_sign = 1.0;
   as->consecutive_recoveries = 0;
   as->last_recovery_end_time = -1000.0;
+  as->low_speed_since = -1.0;
 }
 
 // Starts (or escalates) a committed reverse-and-turn recovery. Repeated
@@ -259,13 +268,15 @@ static double read_radar_min_distance(WbDeviceTag radar) {
 // (M/A/R just went down this step, not just "is held"), or left unchanged
 // (still whatever it was) if no mode key was pressed this step. Callers
 // should check requested_mode against the current mode before switching.
-static void read_keyboard_command(double *drive, double *steer, DriveMode *requested_mode, int *mode_requested) {
-  static int m_was_down = 0, a_was_down = 0, r_was_down = 0;
-  int m_down = 0, a_down = 0, r_down = 0;
+static void read_keyboard_command(double *drive, double *steer, DriveMode *requested_mode, int *mode_requested,
+                                   int *autotune_requested) {
+  static int m_was_down = 0, a_was_down = 0, r_was_down = 0, t_was_down = 0;
+  int m_down = 0, a_down = 0, r_down = 0, t_down = 0;
 
   *drive = 0.0;
   *steer = 0.0;
   *mode_requested = 0;
+  *autotune_requested = 0;
 
   int key = wb_keyboard_get_key();
   while (key >= 0) {
@@ -291,6 +302,9 @@ static void read_keyboard_command(double *drive, double *steer, DriveMode *reque
       case 'R':
         r_down = 1;
         break;
+      case 'T':
+        t_down = 1;
+        break;
       default:
         break;
     }
@@ -307,9 +321,11 @@ static void read_keyboard_command(double *drive, double *steer, DriveMode *reque
     *requested_mode = MODE_REMOTE;
     *mode_requested = 1;
   }
+  *autotune_requested = (t_down && !t_was_down);
   m_was_down = m_down;
   a_was_down = a_down;
   r_was_down = r_down;
+  t_was_down = t_down;
 
   if (*drive > 1.0)
     *drive = 1.0;
@@ -319,6 +335,92 @@ static void read_keyboard_command(double *drive, double *steer, DriveMode *reque
     *steer = 1.0;
   if (*steer < -1.0)
     *steer = -1.0;
+}
+
+// Relay-feedback (Astrom-Hagglund) auto-tune of the front steering motors'
+// position PID. Briefly switches both steer motors to torque control and
+// drives a bang-bang relay around zero angle: the motor swings one way,
+// overshoots, the relay flips, and a self-sustaining limit cycle forms. Its
+// amplitude a and period Tu characterise the plant. From the ultimate gain
+// Ku = 4*d/(pi*a) (d = relay torque), Ziegler-Nichols gives PID gains, which
+// are applied live to both steer motors and printed. Runs its own step loop
+// (it needs many steps) and blocks normal driving until it finishes.
+static void run_steering_autotune(const Motors *m, const Sensors *s) {
+  printf("autotune: starting relay-feedback steering tune (rover will wiggle its front wheels)...\n");
+  fflush(stdout);
+
+  double t0 = wb_robot_get_time();
+  double relay = AUTOTUNE_RELAY_TORQUE;
+  double sign = 1.0;
+  double pos = wb_position_sensor_get_value(s->steer_fl_sensor);
+  int prev_side = (pos >= 0.0) ? 1 : -1;
+
+  double peak_pos = 0.0, peak_neg = 0.0;  // running extremes within the current swing
+  double last_cross_t = -1.0;
+  double period_sum = 0.0, amp_sum = 0.0;
+  int period_n = 0, amp_n = 0;
+
+  while (wb_robot_step(TIME_STEP) != -1) {
+    double now = wb_robot_get_time();
+    pos = wb_position_sensor_get_value(s->steer_fl_sensor);
+
+    // Relay: push toward zero; when we cross zero the drive direction flips,
+    // sustaining an oscillation about the setpoint.
+    sign = (pos > 0.0) ? -1.0 : 1.0;
+    wb_motor_set_torque(m->steer_fl, sign * relay);
+    wb_motor_set_torque(m->steer_fr, sign * relay);
+
+    if (pos > peak_pos)
+      peak_pos = pos;
+    if (pos < peak_neg)
+      peak_neg = pos;
+
+    int side = (pos >= 0.0) ? 1 : -1;
+    if (side != prev_side) {  // zero crossing = half-cycle boundary
+      if (last_cross_t > 0.0) {
+        period_sum += 2.0 * (now - last_cross_t);  // full period = 2 half-cycles
+        period_n++;
+        amp_sum += (peak_pos - peak_neg);  // peak-to-peak of the swing just finished
+        amp_n++;
+      }
+      last_cross_t = now;
+      peak_pos = 0.0;
+      peak_neg = 0.0;
+      prev_side = side;
+    }
+
+    if (period_n >= AUTOTUNE_CYCLES || (now - t0) > AUTOTUNE_MAX_S)
+      break;
+  }
+
+  // Restore position control (hold straight) regardless of outcome.
+  wb_motor_set_position(m->steer_fl, 0.0);
+  wb_motor_set_position(m->steer_fr, 0.0);
+
+  if (period_n < 3 || amp_n < 3) {
+    printf("autotune: no clean limit cycle formed - keeping existing PID. Try adjusting AUTOTUNE_RELAY_TORQUE.\n");
+    fflush(stdout);
+    return;
+  }
+
+  double Tu = period_sum / period_n;
+  double a = 0.5 * (amp_sum / amp_n);  // amplitude = half of peak-to-peak
+  double Ku = (4.0 * relay) / (M_PI * a);
+
+  // Ziegler-Nichols "classic" PID.
+  double Kp = 0.6 * Ku;
+  double Ti = 0.5 * Tu;
+  double Td = 0.125 * Tu;
+  double Ki = Kp / Ti;
+  double Kd = Kp * Td;
+
+  wb_motor_set_control_pid(m->steer_fl, Kp, Ki, Kd);
+  wb_motor_set_control_pid(m->steer_fr, Kp, Ki, Kd);
+
+  printf("autotune done: Tu=%.3fs a=%.4frad Ku=%.1f -> controlPID P=%.1f I=%.1f D=%.2f (applied)\n", Tu, a, Ku, Kp, Ki,
+         Kd);
+  printf("autotune: to make permanent, put 'controlPID %.1f %.1f %.2f' on both steer motors in the .wbt\n", Kp, Ki, Kd);
+  fflush(stdout);
 }
 
 // Reads "drive steer" (each in [-1,1]) from COMMAND_FILE. If the file is
@@ -353,65 +455,41 @@ static void read_remote_command(double *drive, double *steer) {
 // Reactive obstacle avoidance: drive forward when the path is clear, steer
 // away from whichever side reads closer once something is near, and commit
 // to a reverse-and-turn recovery (toward the more-open side) if boxed in
-// close on both sides or if GPS displacement shows it isn't actually moving
-// despite trying to (e.g. wedged on a rock/wall corner in a way that doesn't
-// read as "too close" on any sensor). Positive steer turns left (see
-// mix_ackermann_differential). Each side's proximity is the closest of that
-// side's front distance sensor and its front/rear corner radars.
+// close on both sides or if it isn't actually moving despite commanding
+// drive (wedged on something that doesn't read as "too close" on any
+// sensor). Positive steer turns left (see mix_ackermann_differential). Each
+// side's proximity is the closest of that side's front distance sensor and
+// its front/rear corner radars.
 //
-// Once a recovery starts, it holds for a minimum committed duration (see
+// Once a recovery starts it holds for a minimum committed duration (see
 // start_recovery) instead of being re-decided every step - logged evidence
 // showed the rover chattering between reverse and forward many times a
-// second at a wall corner, pinned in place, because instantaneous proximity
-// readings flickered back and forth across OBSTACLE_STOP_M while reversing.
-// The stuck-displacement check is also suspended while a recovery is
-// already active, so it can't re-trigger mid-maneuver and flip the escape
-// direction before the vehicle has actually cleared the obstacle.
-static void autonomous_decide(AutonomousState *as, double now_s, const double *pos, const RoverState *state,
-                               double *drive, double *steer) {
-  if (!as->initialized) {
-    as->last_check_time = now_s;
-    as->last_check_pos[0] = pos[0];
-    as->last_check_pos[1] = pos[1];
-    as->initialized = 1;
-  }
-
+// second at a corner, pinned in place, because instantaneous proximity
+// readings flickered across OBSTACLE_STOP_M while reversing. The
+// not-moving check is suspended during a recovery so it can't re-trigger
+// mid-maneuver and flip the escape direction.
+//
+// "Not moving" is judged from GPS ground speed (m/s), NOT position delta:
+// the OSM world's GPS is WGS84 (lat/lon degrees), where a position-delta
+// check falsely reads "stuck" everywhere. Speed is unit-consistent.
+static void autonomous_decide(AutonomousState *as, double now_s, const RoverState *state, double *drive,
+                               double *steer) {
   double left_proximity = fmin(state->ds_left, fmin(state->radar_fl, state->radar_rl));
   double right_proximity = fmin(state->ds_right, fmin(state->radar_fr, state->radar_rr));
 
+  // Continue a committed recovery to completion.
   if (as->in_recovery) {
     if (now_s < as->recovery_until_time) {
       *drive = -0.6;
       *steer = as->recovery_steer_sign;
       return;
     }
-    // Recovery just completed: re-sync the stuck-detection baseline here so
-    // the next STUCK_CHECK_PERIOD_S window measures displacement from where
-    // recovery left off, not from before the maneuver started.
     as->in_recovery = 0;
     as->last_recovery_end_time = now_s;
-    as->last_check_time = now_s;
-    as->last_check_pos[0] = pos[0];
-    as->last_check_pos[1] = pos[1];
+    as->low_speed_since = -1.0;  // fresh baseline after backing up
   }
 
-  if (now_s - as->last_check_time >= STUCK_CHECK_PERIOD_S) {
-    double dx = pos[0] - as->last_check_pos[0];
-    double dy = pos[1] - as->last_check_pos[1];
-    double displacement = sqrt(dx * dx + dy * dy);
-    as->last_check_time = now_s;
-    as->last_check_pos[0] = pos[0];
-    as->last_check_pos[1] = pos[1];
-
-    if (displacement < STUCK_DISPLACEMENT_M) {
-      double steer_sign = (left_proximity > right_proximity) ? 1.0 : -1.0;  // turn toward the more-open side
-      start_recovery(as, now_s, steer_sign);
-      *drive = -0.6;
-      *steer = as->recovery_steer_sign;
-      return;
-    }
-  }
-
+  // Reactive command from the range sensors.
   if (left_proximity < OBSTACLE_STOP_M && right_proximity < OBSTACLE_STOP_M) {
     double steer_sign = (left_proximity > right_proximity) ? 1.0 : -1.0;
     start_recovery(as, now_s, steer_sign);
@@ -422,10 +500,25 @@ static void autonomous_decide(AutonomousState *as, double now_s, const double *p
   if (left_proximity < OBSTACLE_NEAR_M || right_proximity < OBSTACLE_NEAR_M) {
     *drive = 0.5;
     *steer = (left_proximity < right_proximity) ? -1.0 : 1.0;
-    return;
+  } else {
+    *drive = 1.0;
+    *steer = 0.0;
   }
-  *drive = 1.0;
-  *steer = 0.0;
+
+  // Not-moving check: only meaningful when we're actually asking to drive.
+  if (fabs(*drive) > 0.1 && state->speed < STUCK_SPEED_M_S) {
+    if (as->low_speed_since < 0.0)
+      as->low_speed_since = now_s;
+    else if (now_s - as->low_speed_since >= STUCK_CHECK_PERIOD_S) {
+      double steer_sign = (left_proximity > right_proximity) ? 1.0 : -1.0;  // toward the more-open side
+      start_recovery(as, now_s, steer_sign);
+      *drive = -0.6;
+      *steer = as->recovery_steer_sign;
+      as->low_speed_since = -1.0;
+    }
+  } else {
+    as->low_speed_since = -1.0;  // moving fine (or not trying to)
+  }
 }
 
 // Kinematic stand-in for a mechanical differential: given the commanded
@@ -457,6 +550,8 @@ static void read_rover_state(const Sensors *s, RoverState *state) {
 
   const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(s->imu);
   state->heading_deg = rpy[2] * RAD2DEG;  // yaw about Z (up) in this ENU world
+
+  state->speed = wb_gps_get_speed(s->gps);  // m/s, same in local- and WGS84-GPS worlds
 
   state->ds_left = wb_distance_sensor_get_value(s->ds_left);
   state->ds_right = wb_distance_sensor_get_value(s->ds_right);
@@ -526,7 +621,8 @@ int main(int argc, char **argv) {
 
   printf(
       "ugv_teleop: click the 3D view then use arrow keys (Up/Down = drive, Left/Right = steer).\n"
-      "Press 'M' for MANUAL, 'A' for AUTONOMOUS, 'R' for REMOTE (reads %s). Starting in MANUAL.\n",
+      "Press 'M' for MANUAL, 'A' for AUTONOMOUS, 'R' for REMOTE (reads %s), 'T' to auto-tune steering PID.\n"
+      "Starting in MANUAL.\n",
       COMMAND_FILE);
   fflush(stdout);
 
@@ -538,8 +634,13 @@ int main(int argc, char **argv) {
   while (wb_robot_step(TIME_STEP) != -1) {
     double drive, steer;
     DriveMode requested_mode;
-    int mode_requested;
-    read_keyboard_command(&drive, &steer, &requested_mode, &mode_requested);
+    int mode_requested, autotune_requested;
+    read_keyboard_command(&drive, &steer, &requested_mode, &mode_requested, &autotune_requested);
+
+    if (autotune_requested) {
+      run_steering_autotune(&motors, &sensors);
+      continue;  // consumed many steps; restart the loop cleanly
+    }
 
     if (mode_requested && requested_mode != mode) {
       mode = requested_mode;
@@ -555,7 +656,7 @@ int main(int argc, char **argv) {
     read_rover_state(&sensors, &state);
 
     if (mode == MODE_AUTONOMOUS)
-      autonomous_decide(&auto_state, wb_robot_get_time(), state.pos, &state, &drive, &steer);
+      autonomous_decide(&auto_state, wb_robot_get_time(), &state, &drive, &steer);
     else if (mode == MODE_REMOTE)
       read_remote_command(&drive, &steer);
 
