@@ -65,7 +65,13 @@
 #include <stdio.h>
 
 #define TIME_STEP 16
-#define MAX_WHEEL_SPEED 8.0   // rad/s; with the 0.229 m (18 in) wheels this is ~1.8 m/s
+#define MAX_WHEEL_SPEED 8.0   // rad/s baseline; with the 0.229 m (18 in) wheels this is ~1.8 m/s
+
+// Runtime speed multiplier adjusted by PageUp/'+' and PageDown/'-'. Capped so
+// MAX_WHEEL_SPEED * scale stays within the drive motors' 20 rad/s maxVelocity.
+#define SPEED_SCALE_STEP 0.2
+#define SPEED_SCALE_MIN 0.2
+#define SPEED_SCALE_MAX 2.5
 #define MAX_STEER_ANGLE 0.575  // rad (~33 deg), matches the front HingeJoints' minStop/maxStop
 #define PRINT_PERIOD_MS 1000
 #define RAD2DEG (180.0 / M_PI)
@@ -269,18 +275,21 @@ static double read_radar_min_distance(WbDeviceTag radar) {
 // (still whatever it was) if no mode key was pressed this step. Callers
 // should check requested_mode against the current mode before switching.
 static void read_keyboard_command(double *drive, double *steer, DriveMode *requested_mode, int *mode_requested,
-                                   int *autotune_requested) {
-  static int m_was_down = 0, a_was_down = 0, r_was_down = 0, t_was_down = 0;
-  int m_down = 0, a_down = 0, r_down = 0, t_down = 0;
+                                   int *autotune_requested, int *speed_adjust) {
+  static int m_was_down = 0, a_was_down = 0, r_was_down = 0, t_was_down = 0, up_was_down = 0, dn_was_down = 0;
+  int m_down = 0, a_down = 0, r_down = 0, t_down = 0, spd_up = 0, spd_dn = 0;
 
   *drive = 0.0;
   *steer = 0.0;
   *mode_requested = 0;
   *autotune_requested = 0;
+  *speed_adjust = 0;
 
   int key = wb_keyboard_get_key();
   while (key >= 0) {
-    switch (key) {
+    // Mask off SHIFT/CONTROL/ALT bits so e.g. '+' (shift + '=') still matches.
+    int k = key & WB_KEYBOARD_KEY;
+    switch (k) {
       case WB_KEYBOARD_UP:
         *drive += 1.0;
         break;
@@ -305,6 +314,16 @@ static void read_keyboard_command(double *drive, double *steer, DriveMode *reque
       case 'T':
         t_down = 1;
         break;
+      case WB_KEYBOARD_PAGEUP:
+      case '+':
+      case '=':  // unshifted '+' key
+        spd_up = 1;
+        break;
+      case WB_KEYBOARD_PAGEDOWN:
+      case '-':
+      case '_':
+        spd_dn = 1;
+        break;
       default:
         break;
     }
@@ -322,10 +341,17 @@ static void read_keyboard_command(double *drive, double *steer, DriveMode *reque
     *mode_requested = 1;
   }
   *autotune_requested = (t_down && !t_was_down);
+  if (spd_up && !up_was_down)
+    *speed_adjust = 1;
+  else if (spd_dn && !dn_was_down)
+    *speed_adjust = -1;
+
   m_was_down = m_down;
   a_was_down = a_down;
   r_was_down = r_down;
   t_was_down = t_down;
+  up_was_down = spd_up;
+  dn_was_down = spd_dn;
 
   if (*drive > 1.0)
     *drive = 1.0;
@@ -622,7 +648,7 @@ int main(int argc, char **argv) {
   printf(
       "ugv_teleop: click the 3D view then use arrow keys (Up/Down = drive, Left/Right = steer).\n"
       "Press 'M' for MANUAL, 'A' for AUTONOMOUS, 'R' for REMOTE (reads %s), 'T' to auto-tune steering PID.\n"
-      "Starting in MANUAL.\n",
+      "PageUp/'+' speed up, PageDown/'-' slow down. Starting in MANUAL at 1.0x speed.\n",
       COMMAND_FILE);
   fflush(stdout);
 
@@ -630,16 +656,28 @@ int main(int argc, char **argv) {
   AutonomousState auto_state;
   autonomous_state_init(&auto_state);
   int since_last_print_ms = 0;
+  double speed_scale = 1.0;
 
   while (wb_robot_step(TIME_STEP) != -1) {
     double drive, steer;
     DriveMode requested_mode;
-    int mode_requested, autotune_requested;
-    read_keyboard_command(&drive, &steer, &requested_mode, &mode_requested, &autotune_requested);
+    int mode_requested, autotune_requested, speed_adjust;
+    read_keyboard_command(&drive, &steer, &requested_mode, &mode_requested, &autotune_requested, &speed_adjust);
 
     if (autotune_requested) {
       run_steering_autotune(&motors, &sensors);
       continue;  // consumed many steps; restart the loop cleanly
+    }
+
+    if (speed_adjust != 0) {
+      speed_scale += speed_adjust * SPEED_SCALE_STEP;
+      if (speed_scale < SPEED_SCALE_MIN)
+        speed_scale = SPEED_SCALE_MIN;
+      if (speed_scale > SPEED_SCALE_MAX)
+        speed_scale = SPEED_SCALE_MAX;
+      printf("ugv_teleop: speed -> %.1fx (%.1f rad/s max, ~%.1f m/s)\n", speed_scale, MAX_WHEEL_SPEED * speed_scale,
+             MAX_WHEEL_SPEED * speed_scale * 0.2286);
+      fflush(stdout);
     }
 
     if (mode_requested && requested_mode != mode) {
@@ -660,7 +698,7 @@ int main(int argc, char **argv) {
     else if (mode == MODE_REMOTE)
       read_remote_command(&drive, &steer);
 
-    double wheel_speed = drive * MAX_WHEEL_SPEED;
+    double wheel_speed = drive * MAX_WHEEL_SPEED * speed_scale;
     double steer_angle = steer * MAX_STEER_ANGLE;
 
     double left_speed, right_speed;
