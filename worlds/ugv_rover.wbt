@@ -49,7 +49,14 @@ TexturedBackgroundLight {
 RectangleArena {
   floorSize 10 10
   floorTileSize 1 1
-  wallHeight 0.1
+  # Raised from 0.1: all sensors (ds_left/right, 4 corner radars) are mounted
+  # around chassis-center height (~0.155m world Z), aimed level. A 0.1m wall
+  # sits entirely below that, so every sensor's ray/cone passed straight over
+  # it - the rover could physically collide with the boundary while every
+  # sensor reported "clear," which is exactly what happened (pos pinned near
+  # the wall, all 6 sensors reading max range the whole time). 0.3m puts the
+  # wall's top well above the sensors' mounting height.
+  wallHeight 0.3
   contactMaterial "floor"
 }
 # Small static obstacles (no physics needed - Rock's default physics is NULL,
@@ -212,6 +219,358 @@ Rock {
   name "rock_20"
   scale 1.58
   type "regular"
+}
+# 50 more rocks scattered across the arena, randomized position/rotation/scale,
+# kept clear of the rover start and all 23 existing rocks above, and of each other.
+Rock {
+  translation 1.04 0.29 0
+  rotation 0 0 1 3.681
+  name "rock_21"
+  scale 1.05
+  type "flat"
+}
+Rock {
+  translation 2.85 -1.02 0
+  rotation 0 0 1 5.791
+  name "rock_22"
+  scale 1.68
+  type "regular"
+}
+Rock {
+  translation 4.33 -2.60 0
+  rotation 0 0 1 5.732
+  name "rock_23"
+  scale 1.48
+  type "flat"
+}
+Rock {
+  translation -3.82 1.75 0
+  rotation 0 0 1 2.536
+  name "rock_24"
+  scale 1.02
+  type "regular"
+}
+Rock {
+  translation 2.93 0.83 0
+  rotation 0 0 1 6.017
+  name "rock_25"
+  scale 1.19
+  type "regular"
+}
+Rock {
+  translation -1.64 1.68 0
+  rotation 0 0 1 2.872
+  name "rock_26"
+  scale 1.87
+  type "regular"
+}
+Rock {
+  translation -2.63 -3.81 0
+  rotation 0 0 1 3.887
+  name "rock_27"
+  scale 1.29
+  type "regular"
+}
+Rock {
+  translation 1.35 1.05 0
+  rotation 0 0 1 3.99
+  name "rock_28"
+  scale 1.51
+  type "flat"
+}
+Rock {
+  translation -1.89 -0.42 0
+  rotation 0 0 1 5.015
+  name "rock_29"
+  scale 1.87
+  type "regular"
+}
+Rock {
+  translation -0.60 2.56 0
+  rotation 0 0 1 4.876
+  name "rock_30"
+  scale 1.32
+  type "regular"
+}
+Rock {
+  translation 2.42 -3.96 0
+  rotation 0 0 1 4.628
+  name "rock_31"
+  scale 1.24
+  type "regular"
+}
+Rock {
+  translation 3.51 2.68 0
+  rotation 0 0 1 4.726
+  name "rock_32"
+  scale 1.23
+  type "regular"
+}
+Rock {
+  translation -1.30 0.51 0
+  rotation 0 0 1 1.617
+  name "rock_33"
+  scale 1.35
+  type "flat"
+}
+Rock {
+  translation -3.25 -3.88 0
+  rotation 0 0 1 5.152
+  name "rock_34"
+  scale 0.76
+  type "flat"
+}
+Rock {
+  translation -0.64 0.94 0
+  rotation 0 0 1 5.85
+  name "rock_35"
+  scale 1.82
+  type "regular"
+}
+Rock {
+  translation 1.86 3.02 0
+  rotation 0 0 1 1.222
+  name "rock_36"
+  scale 1.09
+  type "regular"
+}
+Rock {
+  translation -3.00 -0.27 0
+  rotation 0 0 1 2.021
+  name "rock_37"
+  scale 1.55
+  type "flat"
+}
+Rock {
+  translation 0.41 2.47 0
+  rotation 0 0 1 1.414
+  name "rock_38"
+  scale 1.81
+  type "regular"
+}
+Rock {
+  translation -0.53 -1.06 0
+  rotation 0 0 1 0.905
+  name "rock_39"
+  scale 1.45
+  type "regular"
+}
+Rock {
+  translation 2.31 -2.32 0
+  rotation 0 0 1 0.539
+  name "rock_40"
+  scale 1.72
+  type "regular"
+}
+Rock {
+  translation -1.39 3.00 0
+  rotation 0 0 1 3.312
+  name "rock_41"
+  scale 0.91
+  type "regular"
+}
+Rock {
+  translation -0.98 -3.17 0
+  rotation 0 0 1 3.168
+  name "rock_42"
+  scale 1.79
+  type "regular"
+}
+Rock {
+  translation 1.23 -3.40 0
+  rotation 0 0 1 0.328
+  name "rock_43"
+  scale 0.86
+  type "regular"
+}
+Rock {
+  translation 3.77 0.70 0
+  rotation 0 0 1 5.381
+  name "rock_44"
+  scale 0.65
+  type "regular"
+}
+Rock {
+  translation -0.03 -4.26 0
+  rotation 0 0 1 6.144
+  name "rock_45"
+  scale 0.72
+  type "regular"
+}
+Rock {
+  translation 3.79 2.07 0
+  rotation 0 0 1 4.968
+  name "rock_46"
+  scale 0.53
+  type "flat"
+}
+Rock {
+  translation 2.22 1.30 0
+  rotation 0 0 1 5.022
+  name "rock_47"
+  scale 1.57
+  type "regular"
+}
+Rock {
+  translation -3.50 -2.90 0
+  rotation 0 0 1 5.703
+  name "rock_48"
+  scale 1.58
+  type "regular"
+}
+Rock {
+  translation 3.16 -3.02 0
+  rotation 0 0 1 0.492
+  name "rock_49"
+  scale 0.8
+  type "regular"
+}
+Rock {
+  translation -3.88 -2.40 0
+  rotation 0 0 1 2.063
+  name "rock_50"
+  scale 1.68
+  type "regular"
+}
+Rock {
+  translation -3.75 3.06 0
+  rotation 0 0 1 2.268
+  name "rock_51"
+  scale 1.49
+  type "regular"
+}
+Rock {
+  translation -4.16 3.85 0
+  rotation 0 0 1 5.982
+  name "rock_52"
+  scale 1.52
+  type "flat"
+}
+Rock {
+  translation 0.44 -3.39 0
+  rotation 0 0 1 2.502
+  name "rock_53"
+  scale 1.48
+  type "regular"
+}
+Rock {
+  translation 0.55 -1.87 0
+  rotation 0 0 1 0.044
+  name "rock_54"
+  scale 1.53
+  type "regular"
+}
+Rock {
+  translation -1.77 -1.13 0
+  rotation 0 0 1 2.026
+  name "rock_55"
+  scale 1.65
+  type "regular"
+}
+Rock {
+  translation -3.93 2.30 0
+  rotation 0 0 1 3.916
+  name "rock_56"
+  scale 1.7
+  type "regular"
+}
+Rock {
+  translation 4.10 1.23 0
+  rotation 0 0 1 0.993
+  name "rock_57"
+  scale 1.68
+  type "flat"
+}
+Rock {
+  translation -2.43 -2.76 0
+  rotation 0 0 1 6.031
+  name "rock_58"
+  scale 0.53
+  type "regular"
+}
+Rock {
+  translation -0.08 2.88 0
+  rotation 0 0 1 4.883
+  name "rock_59"
+  scale 0.99
+  type "regular"
+}
+Rock {
+  translation -3.49 0.34 0
+  rotation 0 0 1 0.389
+  name "rock_60"
+  scale 1.55
+  type "regular"
+}
+Rock {
+  translation -0.89 -4.06 0
+  rotation 0 0 1 6.159
+  name "rock_61"
+  scale 1.1
+  type "flat"
+}
+Rock {
+  translation -0.38 4.33 0
+  rotation 0 0 1 3.862
+  name "rock_62"
+  scale 1.4
+  type "regular"
+}
+Rock {
+  translation 4.02 -3.61 0
+  rotation 0 0 1 4.232
+  name "rock_63"
+  scale 1.97
+  type "regular"
+}
+Rock {
+  translation -3.11 -2.39 0
+  rotation 0 0 1 1.029
+  name "rock_64"
+  scale 1.43
+  type "flat"
+}
+Rock {
+  translation -2.50 2.85 0
+  rotation 0 0 1 1.688
+  name "rock_65"
+  scale 1.82
+  type "regular"
+}
+Rock {
+  translation -0.14 -3.07 0
+  rotation 0 0 1 1.287
+  name "rock_66"
+  scale 0.66
+  type "regular"
+}
+Rock {
+  translation -4.02 -4.38 0
+  rotation 0 0 1 2.21
+  name "rock_67"
+  scale 0.86
+  type "regular"
+}
+Rock {
+  translation 1.38 2.03 0
+  rotation 0 0 1 3.299
+  name "rock_68"
+  scale 1.13
+  type "regular"
+}
+Rock {
+  translation 2.03 -0.85 0
+  rotation 0 0 1 1.163
+  name "rock_69"
+  scale 0.8
+  type "regular"
+}
+Rock {
+  translation 1.88 3.90 0
+  rotation 0 0 1 4.159
+  name "rock_70"
+  scale 1.3
+  type "flat"
 }
 Robot {
   translation 0 0 0.155
@@ -800,13 +1159,18 @@ Robot {
     # maxRadialSpeed are widened here to cover all speeds (including a
     # stationary wall approached slowly or at a shallow angle), so range
     # detection doesn't have that blind spot.
+    # horizontalFieldOfView widened from 0.5 to ~1.65 rad (~95 deg) so each
+    # corner radar covers a full quadrant with slight overlap - at 0.5 rad
+    # (~28.6 deg) there was a ~60 deg gap directly abeam (broadside) between
+    # the front-corner and rear-corner cones, exactly where a wall ends up
+    # once the rover is sliding along it roughly parallel.
     Radar {
       translation 0.14 0.09 0
       rotation 0 0 1 0.7854
       name "radar_fl"
       minRange 0.05
       maxRange 3
-      horizontalFieldOfView 0.5
+      horizontalFieldOfView 1.65
       minAbsoluteRadialSpeed 0
       minRadialSpeed -100
       maxRadialSpeed 100
@@ -817,7 +1181,7 @@ Robot {
       name "radar_fr"
       minRange 0.05
       maxRange 3
-      horizontalFieldOfView 0.5
+      horizontalFieldOfView 1.65
       minAbsoluteRadialSpeed 0
       minRadialSpeed -100
       maxRadialSpeed 100
@@ -828,7 +1192,7 @@ Robot {
       name "radar_rl"
       minRange 0.05
       maxRange 3
-      horizontalFieldOfView 0.5
+      horizontalFieldOfView 1.65
       minAbsoluteRadialSpeed 0
       minRadialSpeed -100
       maxRadialSpeed 100
@@ -839,7 +1203,7 @@ Robot {
       name "radar_rr"
       minRange 0.05
       maxRange 3
-      horizontalFieldOfView 0.5
+      horizontalFieldOfView 1.65
       minAbsoluteRadialSpeed 0
       minRadialSpeed -100
       maxRadialSpeed 100
