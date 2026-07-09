@@ -794,6 +794,56 @@ Robot {
         3 3 0
       ]
     }
+    # 4 corner radars (mmWave-style) for boundary/wall collision avoidance.
+    # Real Doppler radar has trouble seeing things it isn't closing on fast,
+    # which is exactly wrong for "don't hit the arena wall" - minRadialSpeed/
+    # maxRadialSpeed are widened here to cover all speeds (including a
+    # stationary wall approached slowly or at a shallow angle), so range
+    # detection doesn't have that blind spot.
+    Radar {
+      translation 0.14 0.09 0
+      rotation 0 0 1 0.7854
+      name "radar_fl"
+      minRange 0.05
+      maxRange 3
+      horizontalFieldOfView 0.5
+      minAbsoluteRadialSpeed 0
+      minRadialSpeed -100
+      maxRadialSpeed 100
+    }
+    Radar {
+      translation 0.14 -0.09 0
+      rotation 0 0 1 -0.7854
+      name "radar_fr"
+      minRange 0.05
+      maxRange 3
+      horizontalFieldOfView 0.5
+      minAbsoluteRadialSpeed 0
+      minRadialSpeed -100
+      maxRadialSpeed 100
+    }
+    Radar {
+      translation -0.14 0.09 0
+      rotation 0 0 1 2.3562
+      name "radar_rl"
+      minRange 0.05
+      maxRange 3
+      horizontalFieldOfView 0.5
+      minAbsoluteRadialSpeed 0
+      minRadialSpeed -100
+      maxRadialSpeed 100
+    }
+    Radar {
+      translation -0.14 -0.09 0
+      rotation 0 0 1 -2.3562
+      name "radar_rr"
+      minRange 0.05
+      maxRange 3
+      horizontalFieldOfView 0.5
+      minAbsoluteRadialSpeed 0
+      minRadialSpeed -100
+      maxRadialSpeed 100
+    }
   ]
   boundingObject Box {
     size 0.28 0.18 0.15

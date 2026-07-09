@@ -7,3 +7,6 @@ build/
 # Runtime logs
 *.log
 ugv_teleop_log.csv
+
+# Remote command channel (runtime state, not source)
+controllers/ugv_teleop/rover_command.txt
