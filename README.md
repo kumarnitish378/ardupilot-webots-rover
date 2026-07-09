@@ -59,7 +59,7 @@ Robot node in both).
 
 ### 2. Clone
 ```bash
-git clone https://github.com/<your-user>/<your-repo>.git
+git clone https://github.com/kumarnitish378/ardupilot-webots-rover.git
 ```
 
 ### 3. Open a world
