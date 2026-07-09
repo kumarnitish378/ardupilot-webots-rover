@@ -91,7 +91,22 @@
 // maneuver if it isn't moving despite trying to drive.
 #define STUCK_CHECK_PERIOD_S 1.0   // how often to sample position
 #define STUCK_DISPLACEMENT_M 0.05  // moved less than this while driving = stuck
-#define STUCK_RECOVERY_S 1.5       // how long to force reverse-and-turn recovery
+
+// Recovery commitment: logged evidence of the failure mode this fixes -
+// re-deciding "reverse or not" fresh every 16ms step let the rover chatter
+// between reverse and forward 10+ times a second at a wall corner (position
+// pinned the whole time), because tiny sensor fluctuations while reversing
+// kept crossing the OBSTACLE_STOP_M threshold back and forth. Once a
+// recovery starts (from either the proximity check or the stuck-displacement
+// check), it now commits to reverse-and-turn for a minimum duration
+// regardless of momentary readings, and the stuck-check is suspended while
+// a recovery is already active so it can't re-trigger mid-maneuver and flip
+// the escape direction. Repeated recoveries in the same spot escalate the
+// duration so a stubborn corner gets backed away from further each attempt
+// instead of retrying the same too-short maneuver forever.
+#define RECOVERY_BASE_S 1.5             // commitment duration per escalation level
+#define RECOVERY_MAX_LEVEL 3            // cap: level 3 = 4.5s single commitment
+#define RECOVERY_ESCALATION_WINDOW_S 6.0  // re-stuck within this long after a recovery counts as still-stuck
 
 #define COMMAND_FILE "rover_command.txt"
 
@@ -143,8 +158,13 @@ typedef struct {
   int initialized;
   double last_check_time;
   double last_check_pos[2];
+
+  int in_recovery;
   double recovery_until_time;
   double recovery_steer_sign;
+
+  int consecutive_recoveries;
+  double last_recovery_end_time;
 } AutonomousState;
 
 static void autonomous_state_init(AutonomousState *as) {
@@ -152,8 +172,28 @@ static void autonomous_state_init(AutonomousState *as) {
   as->last_check_time = 0.0;
   as->last_check_pos[0] = 0.0;
   as->last_check_pos[1] = 0.0;
+  as->in_recovery = 0;
   as->recovery_until_time = -1.0;
   as->recovery_steer_sign = 1.0;
+  as->consecutive_recoveries = 0;
+  as->last_recovery_end_time = -1000.0;
+}
+
+// Starts (or escalates) a committed reverse-and-turn recovery. Repeated
+// triggers within RECOVERY_ESCALATION_WINDOW_S of the last one ending push
+// the escalation level up (capped), giving each retry more time to actually
+// clear the obstacle instead of repeating the same too-short maneuver.
+static void start_recovery(AutonomousState *as, double now_s, double steer_sign) {
+  if (now_s - as->last_recovery_end_time < RECOVERY_ESCALATION_WINDOW_S)
+    as->consecutive_recoveries++;
+  else
+    as->consecutive_recoveries = 1;
+  if (as->consecutive_recoveries > RECOVERY_MAX_LEVEL)
+    as->consecutive_recoveries = RECOVERY_MAX_LEVEL;
+
+  as->in_recovery = 1;
+  as->recovery_until_time = now_s + RECOVERY_BASE_S * as->consecutive_recoveries;
+  as->recovery_steer_sign = steer_sign;
 }
 
 static void motors_init(Motors *m) {
@@ -311,19 +351,22 @@ static void read_remote_command(double *drive, double *steer) {
 }
 
 // Reactive obstacle avoidance: drive forward when the path is clear, steer
-// away from whichever side reads closer once something is near, and reverse
-// while turning toward the more-open side if boxed in close on both sides.
-// Positive steer turns left (see mix_ackermann_differential). Each side's
-// proximity is the closest of that side's front distance sensor and its
-// front/rear corner radars, so a wall or rock near a corner (not just
-// straight ahead) is caught too - this is what actually avoids boundary
-// collisions, not just head-on ones.
-// Also tracks actual GPS displacement: if it isn't moving despite trying to
-// drive - e.g. wedged on a rock, spinning in place - a plain range-sensor
-// check wouldn't necessarily catch that (the obstacle might not read as
-// "too close" on any sensor), so this forces a reverse-and-turn recovery
-// instead, alternating direction each time so it doesn't just rock against
-// the same obstacle repeatedly.
+// away from whichever side reads closer once something is near, and commit
+// to a reverse-and-turn recovery (toward the more-open side) if boxed in
+// close on both sides or if GPS displacement shows it isn't actually moving
+// despite trying to (e.g. wedged on a rock/wall corner in a way that doesn't
+// read as "too close" on any sensor). Positive steer turns left (see
+// mix_ackermann_differential). Each side's proximity is the closest of that
+// side's front distance sensor and its front/rear corner radars.
+//
+// Once a recovery starts, it holds for a minimum committed duration (see
+// start_recovery) instead of being re-decided every step - logged evidence
+// showed the rover chattering between reverse and forward many times a
+// second at a wall corner, pinned in place, because instantaneous proximity
+// readings flickered back and forth across OBSTACLE_STOP_M while reversing.
+// The stuck-displacement check is also suspended while a recovery is
+// already active, so it can't re-trigger mid-maneuver and flip the escape
+// direction before the vehicle has actually cleared the obstacle.
 static void autonomous_decide(AutonomousState *as, double now_s, const double *pos, const RoverState *state,
                                double *drive, double *steer) {
   if (!as->initialized) {
@@ -333,33 +376,47 @@ static void autonomous_decide(AutonomousState *as, double now_s, const double *p
     as->initialized = 1;
   }
 
-  if (now_s - as->last_check_time >= STUCK_CHECK_PERIOD_S) {
-    double dx = pos[0] - as->last_check_pos[0];
-    double dy = pos[1] - as->last_check_pos[1];
-    double displacement = sqrt(dx * dx + dy * dy);
+  double left_proximity = fmin(state->ds_left, fmin(state->radar_fl, state->radar_rl));
+  double right_proximity = fmin(state->ds_right, fmin(state->radar_fr, state->radar_rr));
 
-    if (displacement < STUCK_DISPLACEMENT_M) {
-      as->recovery_until_time = now_s + STUCK_RECOVERY_S;
-      as->recovery_steer_sign = -as->recovery_steer_sign;  // alternate side each time
+  if (as->in_recovery) {
+    if (now_s < as->recovery_until_time) {
+      *drive = -0.6;
+      *steer = as->recovery_steer_sign;
+      return;
     }
-
+    // Recovery just completed: re-sync the stuck-detection baseline here so
+    // the next STUCK_CHECK_PERIOD_S window measures displacement from where
+    // recovery left off, not from before the maneuver started.
+    as->in_recovery = 0;
+    as->last_recovery_end_time = now_s;
     as->last_check_time = now_s;
     as->last_check_pos[0] = pos[0];
     as->last_check_pos[1] = pos[1];
   }
 
-  if (now_s < as->recovery_until_time) {
-    *drive = -0.6;
-    *steer = as->recovery_steer_sign;
-    return;
+  if (now_s - as->last_check_time >= STUCK_CHECK_PERIOD_S) {
+    double dx = pos[0] - as->last_check_pos[0];
+    double dy = pos[1] - as->last_check_pos[1];
+    double displacement = sqrt(dx * dx + dy * dy);
+    as->last_check_time = now_s;
+    as->last_check_pos[0] = pos[0];
+    as->last_check_pos[1] = pos[1];
+
+    if (displacement < STUCK_DISPLACEMENT_M) {
+      double steer_sign = (left_proximity > right_proximity) ? 1.0 : -1.0;  // turn toward the more-open side
+      start_recovery(as, now_s, steer_sign);
+      *drive = -0.6;
+      *steer = as->recovery_steer_sign;
+      return;
+    }
   }
 
-  double left_proximity = fmin(state->ds_left, fmin(state->radar_fl, state->radar_rl));
-  double right_proximity = fmin(state->ds_right, fmin(state->radar_fr, state->radar_rr));
-
   if (left_proximity < OBSTACLE_STOP_M && right_proximity < OBSTACLE_STOP_M) {
+    double steer_sign = (left_proximity > right_proximity) ? 1.0 : -1.0;
+    start_recovery(as, now_s, steer_sign);
     *drive = -0.6;
-    *steer = (left_proximity > right_proximity) ? 1.0 : -1.0;
+    *steer = as->recovery_steer_sign;
     return;
   }
   if (left_proximity < OBSTACLE_NEAR_M || right_proximity < OBSTACLE_NEAR_M) {
