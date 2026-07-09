@@ -63,6 +63,52 @@ Floor {
     metalness 0
   }
 }
+# Geofence: 2 m-tall solid boundary 2 m inside the floor edge so the rover
+# is physically contained to the mapped world (cannot drive off into the void).
+Solid {
+  translation 366 0 1
+  name "geofence_east"
+  children [
+    Shape {
+      appearance PBRAppearance { baseColor 1 0.4 0 transparency 0.55 roughness 1 metalness 0 }
+      geometry Box { size 0.5 758 2 }
+    }
+  ]
+  boundingObject Box { size 0.5 758 2 }
+}
+Solid {
+  translation -366 0 1
+  name "geofence_west"
+  children [
+    Shape {
+      appearance PBRAppearance { baseColor 1 0.4 0 transparency 0.55 roughness 1 metalness 0 }
+      geometry Box { size 0.5 758 2 }
+    }
+  ]
+  boundingObject Box { size 0.5 758 2 }
+}
+Solid {
+  translation 0 379 1
+  name "geofence_north"
+  children [
+    Shape {
+      appearance PBRAppearance { baseColor 1 0.4 0 transparency 0.55 roughness 1 metalness 0 }
+      geometry Box { size 732 0.5 2 }
+    }
+  ]
+  boundingObject Box { size 732 0.5 2 }
+}
+Solid {
+  translation 0 -379 1
+  name "geofence_south"
+  children [
+    Shape {
+      appearance PBRAppearance { baseColor 1 0.4 0 transparency 0.55 roughness 1 metalness 0 }
+      geometry Box { size 732 0.5 2 }
+    }
+  ]
+  boundingObject Box { size 732 0.5 2 }
+}
 Crossroad {
   translation 235.271511 -111.524453 0.010000
   name "crossroad(1)"
@@ -5161,8 +5207,26 @@ Robot {
       translation 0.75 0 0.325
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.08 0.08 0.08 roughness 0.5 metalness 0.3 }
+          appearance PBRAppearance { baseColor 0 0.85 0.85 roughness 0.5 metalness 0.3 }
           geometry Box { size 0.35 0.5 0.3 }
+        }
+      ]
+    }
+    Pose {
+      translation 0.885 0 -0.165
+      children [
+        Shape {
+          appearance PBRAppearance { baseColor 0.1 0.85 0.1 roughness 0.5 metalness 0.3 }
+          geometry Box { size 0.08 0.72 0.18 }
+        }
+      ]
+    }
+    Pose {
+      translation -0.885 0 -0.165
+      children [
+        Shape {
+          appearance PBRAppearance { baseColor 0.85 0.1 0.1 roughness 0.5 metalness 0.3 }
+          geometry Box { size 0.08 0.72 0.18 }
         }
       ]
     }
@@ -5271,7 +5335,7 @@ Robot {
                   geometry Cylinder { radius 0.2286 height 0.18 }
                 }
                 Shape {
-                  appearance PBRAppearance { baseColor 1 1 1 roughness 0.4 metalness 0 }
+                  appearance PBRAppearance { baseColor 0.1 0.9 0.1 roughness 0.4 metalness 0 }
                   geometry Box { size 0.43434 0.05 0.19 }
                 }
               ]
@@ -5348,7 +5412,7 @@ Robot {
                   geometry Cylinder { radius 0.2286 height 0.18 }
                 }
                 Shape {
-                  appearance PBRAppearance { baseColor 1 1 1 roughness 0.4 metalness 0 }
+                  appearance PBRAppearance { baseColor 0.1 0.9 0.1 roughness 0.4 metalness 0 }
                   geometry Box { size 0.43434 0.05 0.19 }
                 }
               ]
@@ -5412,7 +5476,7 @@ Robot {
                   geometry Cylinder { radius 0.2286 height 0.18 }
                 }
                 Shape {
-                  appearance PBRAppearance { baseColor 1 1 1 roughness 0.4 metalness 0 }
+                  appearance PBRAppearance { baseColor 0.9 0.1 0.1 roughness 0.4 metalness 0 }
                   geometry Box { size 0.43434 0.05 0.19 }
                 }
               ]
@@ -5470,7 +5534,7 @@ Robot {
                   geometry Cylinder { radius 0.2286 height 0.18 }
                 }
                 Shape {
-                  appearance PBRAppearance { baseColor 1 1 1 roughness 0.4 metalness 0 }
+                  appearance PBRAppearance { baseColor 0.9 0.1 0.1 roughness 0.4 metalness 0 }
                   geometry Box { size 0.43434 0.05 0.19 }
                 }
               ]
@@ -5487,6 +5551,15 @@ Robot {
       }
     }
     Camera { translation 0.895 0 0.355 width 640 height 480 }
+    Pose {
+      translation 0.905 0 0.355
+      children [
+        Shape {
+          appearance PBRAppearance { baseColor 0.1 0.3 0.95 emissiveColor 0 0.1 0.35 roughness 0.4 metalness 0.2 }
+          geometry Sphere { radius 0.05 }
+        }
+      ]
+    }
     GPS {
     }
     InertialUnit {
@@ -5496,6 +5569,15 @@ Robot {
     }
     Accelerometer {
       name "accel"
+    }
+    Pose {
+      translation 0 0 0.355
+      children [
+        Shape {
+          appearance PBRAppearance { baseColor 0.95 0.5 0.1 emissiveColor 0.35 0.15 0 roughness 0.4 metalness 0.2 }
+          geometry Sphere { radius 0.06 }
+        }
+      ]
     }
     DistanceSensor {
       translation 0.865 0.22 -0.1
@@ -5508,6 +5590,24 @@ Robot {
       rotation 0 0 1 -0.3
       name "ds_right"
       lookupTable [ 0 0 0, 8 8 0 ]
+    }
+    Pose {
+      translation 0.865 0.22 -0.1
+      children [
+        Shape {
+          appearance PBRAppearance { baseColor 0.95 0.85 0.1 emissiveColor 0.3 0.25 0 roughness 0.4 metalness 0.2 }
+          geometry Sphere { radius 0.045 }
+        }
+      ]
+    }
+    Pose {
+      translation 0.865 -0.22 -0.1
+      children [
+        Shape {
+          appearance PBRAppearance { baseColor 0.95 0.85 0.1 emissiveColor 0.3 0.25 0 roughness 0.4 metalness 0.2 }
+          geometry Sphere { radius 0.045 }
+        }
+      ]
     }
     Radar {
       translation 0.865 0.35 -0.1
