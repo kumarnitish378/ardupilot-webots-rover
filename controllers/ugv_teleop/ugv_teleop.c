@@ -60,6 +60,7 @@
 #include <webots/inertial_unit.h>
 #include <webots/distance_sensor.h>
 #include <webots/radar.h>
+#include <webots/camera.h>
 #include <webots/keyboard.h>
 #include <math.h>
 #include <stdio.h>
@@ -160,6 +161,8 @@ typedef struct {
   WbDeviceTag radar_fr;
   WbDeviceTag radar_rl;
   WbDeviceTag radar_rr;
+  WbDeviceTag camera;      // front FPV camera
+  WbDeviceTag map_camera;  // top-down overhead "map" camera
 } Sensors;
 
 typedef struct {
@@ -239,6 +242,8 @@ static void sensors_init(Sensors *s) {
   s->radar_fr = wb_robot_get_device("radar_fr");
   s->radar_rl = wb_robot_get_device("radar_rl");
   s->radar_rr = wb_robot_get_device("radar_rr");
+  s->camera = wb_robot_get_device("camera");
+  s->map_camera = wb_robot_get_device("map_camera");
 
   wb_gps_enable(s->gps, TIME_STEP);
   wb_inertial_unit_enable(s->imu, TIME_STEP);
@@ -250,6 +255,10 @@ static void sensors_init(Sensors *s) {
   wb_radar_enable(s->radar_fr, TIME_STEP);
   wb_radar_enable(s->radar_rl, TIME_STEP);
   wb_radar_enable(s->radar_rr, TIME_STEP);
+  // Enabling the cameras makes Webots show their live feeds as overlays in
+  // the 3D view: "camera" = front FPV, "map_camera" = top-down minimap.
+  wb_camera_enable(s->camera, TIME_STEP);
+  wb_camera_enable(s->map_camera, TIME_STEP);
 }
 
 // Closest target's distance on a radar, or RADAR_MAX_RANGE if it sees nothing

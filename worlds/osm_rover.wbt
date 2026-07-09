@@ -5550,7 +5550,7 @@ Robot {
         physics Physics { density -1 mass 4 }
       }
     }
-    Camera { translation 0.895 0 0.355 width 640 height 480 }
+    Camera { translation 0.895 0 0.355 name "camera" width 640 height 480 }
     Pose {
       translation 0.905 0 0.355
       children [
@@ -5559,6 +5559,14 @@ Robot {
           geometry Sphere { radius 0.05 }
         }
       ]
+    }
+    Camera {
+      translation 0 0 30
+      rotation 0 1 0 1.5708
+      name "map_camera"
+      fieldOfView 1.0
+      width 400
+      height 400
     }
     GPS {
     }
