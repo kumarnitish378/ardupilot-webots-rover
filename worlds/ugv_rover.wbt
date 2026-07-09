@@ -645,7 +645,7 @@ Solid {
   name "sand_dune_3"
 }
 Robot {
-  translation 0 0 0.485
+  translation 0 0 0.665
   rotation 0 0 1 0
   name "ugv_rover"
   controller "ugv_teleop"
@@ -716,17 +716,27 @@ Robot {
     SliderJoint {
       jointParameters JointParameters {
         axis 0 0 1
-        minStop -0.06
-        maxStop 0.06
-        springConstant 16000
-        dampingConstant 1500
+        minStop -0.12
+        maxStop 0.12
+        springConstant 7000
+        dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_FL_CARRIER Solid {
-        translation 0.6 0.55 -0.2564
+        translation 0.6 0.55 -0.4364
         children [
           Shape {
             appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
             geometry Box { size 0.15 0.12 0.08 }
+          }
+          Pose {
+            translation 0 -0.125 0.1157
+            rotation 1 0 0 0.824016
+            children [
+              Shape {
+                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
+                geometry Box { size 0.08 0.09 0.340655 }
+              }
+            ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
@@ -783,17 +793,27 @@ Robot {
     SliderJoint {
       jointParameters JointParameters {
         axis 0 0 1
-        minStop -0.06
-        maxStop 0.06
-        springConstant 16000
-        dampingConstant 1500
+        minStop -0.12
+        maxStop 0.12
+        springConstant 7000
+        dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_FR_CARRIER Solid {
-        translation 0.6 -0.55 -0.2564
+        translation 0.6 -0.55 -0.4364
         children [
           Shape {
             appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
             geometry Box { size 0.15 0.12 0.08 }
+          }
+          Pose {
+            translation 0 0.125 0.1157
+            rotation 1 0 0 -0.824016
+            children [
+              Shape {
+                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
+                geometry Box { size 0.08 0.09 0.340655 }
+              }
+            ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
@@ -850,17 +870,27 @@ Robot {
     SliderJoint {
       jointParameters JointParameters {
         axis 0 0 1
-        minStop -0.06
-        maxStop 0.06
-        springConstant 16000
-        dampingConstant 1500
+        minStop -0.12
+        maxStop 0.12
+        springConstant 7000
+        dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_RL_CARRIER Solid {
-        translation -0.6 0.55 -0.2564
+        translation -0.6 0.55 -0.4364
         children [
           Shape {
             appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
             geometry Box { size 0.15 0.12 0.08 }
+          }
+          Pose {
+            translation 0 -0.125 0.1157
+            rotation 1 0 0 0.824016
+            children [
+              Shape {
+                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
+                geometry Box { size 0.08 0.09 0.340655 }
+              }
+            ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
@@ -898,17 +928,27 @@ Robot {
     SliderJoint {
       jointParameters JointParameters {
         axis 0 0 1
-        minStop -0.06
-        maxStop 0.06
-        springConstant 16000
-        dampingConstant 1500
+        minStop -0.12
+        maxStop 0.12
+        springConstant 7000
+        dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_RR_CARRIER Solid {
-        translation -0.6 -0.55 -0.2564
+        translation -0.6 -0.55 -0.4364
         children [
           Shape {
             appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
             geometry Box { size 0.15 0.12 0.08 }
+          }
+          Pose {
+            translation 0 0.125 0.1157
+            rotation 1 0 0 -0.824016
+            children [
+              Shape {
+                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
+                geometry Box { size 0.08 0.09 0.340655 }
+              }
+            ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
