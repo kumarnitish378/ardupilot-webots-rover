@@ -14,8 +14,6 @@ WorldInfo {
     "Author: David Mansolino <david.mansolino@epfl.ch>"
   ]
   basicTimeStep 8
-  gpsCoordinateSystem "WGS84"
-  gpsReference 28.5016472 77.3921611 0
   lineScale 3
   contactProperties [
     ContactProperties {
@@ -34,8 +32,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.05201774311469365 -0.1657062893032466 -0.9848023050778276 5.656205677567651
-  position -7.122310981432758 -7.0804473718823475 1.585558162893999
+  orientation 0.36147937622189913 -0.7705577973009125 -0.524950799204071 4.823177213716036
+  position -17.663125009868473 -25.89494040182639 91.32265985415982
   near 1
   follow "ugv_rover"
   followSmoothness 0.2
@@ -4922,21 +4920,31 @@ SimpleBuilding {
   wallType "glass highrise"
 }
 Robot {
-  translation 0 0 0.665
-  rotation 0 0 1 0
-  name "ugv_rover"
-  controller "ugv_teleop"
+  translation -10.169113467018727 5.396478691588469 0.6087985656977295
+  rotation 0.0023665696113143887 -0.003358807270415004 0.999991558845371 1.2766361131234627
   children [
     Shape {
-      appearance PBRAppearance { baseColor 0.36 0.38 0.3 roughness 0.7 metalness 0.1 }
-      geometry Box { size 1.83 0.8 0.61 }
+      appearance PBRAppearance {
+        baseColor 0.36 0.38 0.3
+        roughness 0.7
+        metalness 0.1
+      }
+      geometry Box {
+        size 1.83 0.8 0.61
+      }
     }
     Pose {
       translation 0.75 0 0.325
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0 0.85 0.85 roughness 0.5 metalness 0.3 }
-          geometry Box { size 0.35 0.5 0.3 }
+          appearance PBRAppearance {
+            baseColor 0 0.85 0.85
+            roughness 0.5
+            metalness 0.3
+          }
+          geometry Box {
+            size 0.35 0.5 0.3
+          }
         }
       ]
     }
@@ -4944,8 +4952,14 @@ Robot {
       translation 0.885 0 -0.165
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.1 0.85 0.1 roughness 0.5 metalness 0.3 }
-          geometry Box { size 0.08 0.72 0.18 }
+          appearance PBRAppearance {
+            baseColor 0.1 0.85 0.1
+            roughness 0.5
+            metalness 0.3
+          }
+          geometry Box {
+            size 0.08 0.72 0.18
+          }
         }
       ]
     }
@@ -4953,8 +4967,14 @@ Robot {
       translation -0.885 0 -0.165
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.85 0.1 0.1 roughness 0.5 metalness 0.3 }
-          geometry Box { size 0.08 0.72 0.18 }
+          appearance PBRAppearance {
+            baseColor 0.85 0.1 0.1
+            roughness 0.5
+            metalness 0.3
+          }
+          geometry Box {
+            size 0.08 0.72 0.18
+          }
         }
       ]
     }
@@ -4962,8 +4982,14 @@ Robot {
       translation 0.15 0.17 0.385
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.6 metalness 0.2 }
-          geometry Box { size 0.3 0.24 0.16 }
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.3 0.24 0.16
+          }
         }
       ]
     }
@@ -4971,8 +4997,14 @@ Robot {
       translation 0.15 -0.17 0.385
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.6 metalness 0.2 }
-          geometry Box { size 0.3 0.24 0.16 }
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.3 0.24 0.16
+          }
         }
       ]
     }
@@ -4980,8 +5012,14 @@ Robot {
       translation -0.35 0.17 0.385
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.6 metalness 0.2 }
-          geometry Box { size 0.3 0.24 0.16 }
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.3 0.24 0.16
+          }
         }
       ]
     }
@@ -4989,304 +5027,531 @@ Robot {
       translation -0.35 -0.17 0.385
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.6 metalness 0.2 }
-          geometry Box { size 0.3 0.24 0.16 }
+          appearance PBRAppearance {
+            baseColor 0.15 0.15 0.15
+            roughness 0.6
+            metalness 0.2
+          }
+          geometry Box {
+            size 0.3 0.24 0.16
+          }
         }
       ]
     }
     Pose {
       translation -0.5 0.18 0.755
       children [
-        Shape { appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.4 metalness 0.5 }
-          geometry Cylinder { radius 0.015 height 0.9 } }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.05 0.05 0.05
+            roughness 0.4
+            metalness 0.5
+          }
+          geometry Cylinder {
+            height 0.9
+            radius 0.015
+          }
+        }
       ]
     }
     Pose {
       translation -0.5 -0.18 0.665
       children [
-        Shape { appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 0.4 metalness 0.5 }
-          geometry Cylinder { radius 0.015 height 0.72 } }
+        Shape {
+          appearance PBRAppearance {
+            baseColor 0.05 0.05 0.05
+            roughness 0.4
+            metalness 0.5
+          }
+          geometry Cylinder {
+            height 0.72
+            radius 0.015
+          }
+        }
       ]
     }
     SliderJoint {
       jointParameters JointParameters {
-        axis 0 0 1
+        position 0.031846737913875295
         minStop -0.12
         maxStop 0.12
         springConstant 7000
         dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_FL_CARRIER Solid {
-        translation 0.6 0.55 -0.4364
+        translation 0.6 0.55 -0.40455326208612474
         children [
           Shape {
-            appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
-            geometry Box { size 0.15 0.12 0.08 }
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.15 0.12 0.08
+            }
           }
           Pose {
             translation 0 -0.125 0.1157
             rotation 1 0 0 0.824016
             children [
               Shape {
-                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
-                geometry Box { size 0.08 0.09 0.340655 }
+                appearance PBRAppearance {
+                  baseColor 0.15 0.15 0.15
+                  roughness 0.7
+                  metalness 0.4
+                }
+                geometry Box {
+                  size 0.08 0.09 0.340655
+                }
               }
             ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
+              position 0.04719605174746968
               axis 0 0 1
               minStop -0.575
               maxStop 0.575
             }
             device [
-              RotationalMotor { name "steer_fl" controlPID 100 0 10 maxVelocity 3 maxTorque 2000 }
-              PositionSensor { name "steer_fl_sensor" }
+              RotationalMotor {
+                name "steer_fl"
+                controlPID 100 0 10
+                maxVelocity 3
+                maxTorque 2000
+              }
+              PositionSensor {
+                name "steer_fl_sensor"
+              }
             ]
             endPoint DEF WHEEL_WHEEL_FL_KNUCKLE Solid {
+              rotation 0 0 1 0.047196051747470665
               children [
                 Shape {
-                  appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
-                  geometry Box { size 0.08 0.08 0.12 }
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.2 0.2
+                    roughness 0.8
+                    metalness 0.3
+                  }
+                  geometry Box {
+                    size 0.08 0.08 0.12
+                  }
                 }
-          HingeJoint {
-            jointParameters HingeJointParameters {
-              axis 0 1 0
-              anchor 0.08 0 0
-              dampingConstant 1.0
-            }
-            endPoint DEF WHEEL_WHEEL_FL Solid {
-              translation 0.08 0 0
-              rotation 1 0 0 1.5708
-              children [
-                Shape {
-                  appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 1 metalness 0 }
-                  geometry Cylinder { radius 0.2286 height 0.18 }
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                    position -1235.9421771023376
+                    axis 0 1 0
+                    anchor 0.08 0 0
+                    dampingConstant 1
+                  }
+                  endPoint DEF WHEEL_WHEEL_FL Solid {
+                    translation 0.08 0 0
+                    rotation -0.47205101136973215 -0.6233638536071682 0.623366143354637 4.023668773518915
+                    children [
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.05 0.05 0.05
+                          roughness 1
+                          metalness 0
+                        }
+                        geometry Cylinder {
+                          height 0.18
+                          radius 0.2286
+                        }
+                      }
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.1 0.9 0.1
+                          roughness 0.4
+                          metalness 0
+                        }
+                        geometry Box {
+                          size 0.43434 0.05 0.19
+                        }
+                      }
+                    ]
+                    name "wheel_fl"
+                    contactMaterial "wheel"
+                    boundingObject Cylinder {
+                      height 0.18
+                      radius 0.2286
+                    }
+                    physics Physics {
+                      density -1
+                      mass 12
+                    }
+                  }
                 }
-                Shape {
-                  appearance PBRAppearance { baseColor 0.1 0.9 0.1 roughness 0.4 metalness 0 }
-                  geometry Box { size 0.43434 0.05 0.19 }
-                }
-              ]
-              name "wheel_fl"
-              contactMaterial "wheel"
-              boundingObject Cylinder { radius 0.2286 height 0.18 }
-              physics Physics { density -1 mass 12 }
-            }
-          }
               ]
               name "wheel_fl_knuckle"
-              boundingObject Box { size 0.08 0.08 0.12 }
-              physics Physics { density -1 mass 3 }
+              boundingObject Box {
+                size 0.08 0.08 0.12
+              }
+              physics Physics {
+                density -1
+                mass 3
+              }
             }
           }
         ]
         name "wheel_fl_carrier"
-        boundingObject Box { size 0.15 0.12 0.08 }
-        physics Physics { density -1 mass 4 }
+        boundingObject Box {
+          size 0.15 0.12 0.08
+        }
+        physics Physics {
+          density -1
+          mass 4
+        }
       }
     }
     SliderJoint {
       jointParameters JointParameters {
-        axis 0 0 1
+        position 0.0317200483780358
         minStop -0.12
         maxStop 0.12
         springConstant 7000
         dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_FR_CARRIER Solid {
-        translation 0.6 -0.55 -0.4364
+        translation 0.6 -0.55 -0.40467995162196424
         children [
           Shape {
-            appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
-            geometry Box { size 0.15 0.12 0.08 }
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.15 0.12 0.08
+            }
           }
           Pose {
             translation 0 0.125 0.1157
             rotation 1 0 0 -0.824016
             children [
               Shape {
-                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
-                geometry Box { size 0.08 0.09 0.340655 }
+                appearance PBRAppearance {
+                  baseColor 0.15 0.15 0.15
+                  roughness 0.7
+                  metalness 0.4
+                }
+                geometry Box {
+                  size 0.08 0.09 0.340655
+                }
               }
             ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
+              position 0.02911014115186508
               axis 0 0 1
               minStop -0.575
               maxStop 0.575
             }
             device [
-              RotationalMotor { name "steer_fr" controlPID 100 0 10 maxVelocity 3 maxTorque 2000 }
-              PositionSensor { name "steer_fr_sensor" }
+              RotationalMotor {
+                name "steer_fr"
+                controlPID 100 0 10
+                maxVelocity 3
+                maxTorque 2000
+              }
+              PositionSensor {
+                name "steer_fr_sensor"
+              }
             ]
             endPoint DEF WHEEL_WHEEL_FR_KNUCKLE Solid {
+              rotation 0 0 1 0.02911014115185994
               children [
                 Shape {
-                  appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
-                  geometry Box { size 0.08 0.08 0.12 }
+                  appearance PBRAppearance {
+                    baseColor 0.2 0.2 0.2
+                    roughness 0.8
+                    metalness 0.3
+                  }
+                  geometry Box {
+                    size 0.08 0.08 0.12
+                  }
                 }
-          HingeJoint {
-            jointParameters HingeJointParameters {
-              axis 0 1 0
-              anchor 0.08 0 0
-              dampingConstant 1.0
-            }
-            endPoint DEF WHEEL_WHEEL_FR Solid {
-              translation 0.08 0 0
-              rotation 1 0 0 1.5708
-              children [
-                Shape {
-                  appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 1 metalness 0 }
-                  geometry Cylinder { radius 0.2286 height 0.18 }
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                    position -1166.7766917971633
+                    axis 0 1 0
+                    anchor 0.08 0 0
+                    dampingConstant 1
+                  }
+                  endPoint DEF WHEEL_WHEEL_FR Solid {
+                    translation 0.08 0 0
+                    rotation 0.45285537314483815 0.6304439273647993 -0.6304462431188698 2.291143578695986
+                    children [
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.05 0.05 0.05
+                          roughness 1
+                          metalness 0
+                        }
+                        geometry Cylinder {
+                          height 0.18
+                          radius 0.2286
+                        }
+                      }
+                      Shape {
+                        appearance PBRAppearance {
+                          baseColor 0.1 0.9 0.1
+                          roughness 0.4
+                          metalness 0
+                        }
+                        geometry Box {
+                          size 0.43434 0.05 0.19
+                        }
+                      }
+                    ]
+                    name "wheel_fr"
+                    contactMaterial "wheel"
+                    boundingObject Cylinder {
+                      height 0.18
+                      radius 0.2286
+                    }
+                    physics Physics {
+                      density -1
+                      mass 12
+                    }
+                  }
                 }
-                Shape {
-                  appearance PBRAppearance { baseColor 0.1 0.9 0.1 roughness 0.4 metalness 0 }
-                  geometry Box { size 0.43434 0.05 0.19 }
-                }
-              ]
-              name "wheel_fr"
-              contactMaterial "wheel"
-              boundingObject Cylinder { radius 0.2286 height 0.18 }
-              physics Physics { density -1 mass 12 }
-            }
-          }
               ]
               name "wheel_fr_knuckle"
-              boundingObject Box { size 0.08 0.08 0.12 }
-              physics Physics { density -1 mass 3 }
+              boundingObject Box {
+                size 0.08 0.08 0.12
+              }
+              physics Physics {
+                density -1
+                mass 3
+              }
             }
           }
         ]
         name "wheel_fr_carrier"
-        boundingObject Box { size 0.15 0.12 0.08 }
-        physics Physics { density -1 mass 4 }
+        boundingObject Box {
+          size 0.15 0.12 0.08
+        }
+        physics Physics {
+          density -1
+          mass 4
+        }
       }
     }
     SliderJoint {
       jointParameters JointParameters {
-        axis 0 0 1
+        position 0.038177869109909654
         minStop -0.12
         maxStop 0.12
         springConstant 7000
         dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_RL_CARRIER Solid {
-        translation -0.6 0.55 -0.4364
+        translation -0.6 0.55 -0.39822213089009034
         children [
           Shape {
-            appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
-            geometry Box { size 0.15 0.12 0.08 }
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.15 0.12 0.08
+            }
           }
           Pose {
             translation 0 -0.125 0.1157
             rotation 1 0 0 0.824016
             children [
               Shape {
-                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
-                geometry Box { size 0.08 0.09 0.340655 }
+                appearance PBRAppearance {
+                  baseColor 0.15 0.15 0.15
+                  roughness 0.7
+                  metalness 0.4
+                }
+                geometry Box {
+                  size 0.08 0.09 0.340655
+                }
               }
             ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
+              position 279.9158466849735
               axis 0 1 0
-              anchor 0 0 0
             }
             device [
-              RotationalMotor { name "wheel_rl" maxVelocity 30 maxTorque 200 }
+              RotationalMotor {
+                name "wheel_rl"
+                maxVelocity 30
+                maxTorque 200
+              }
             ]
             endPoint DEF WHEEL_WHEEL_RL Solid {
-              translation 0 0 0
-              rotation 1 0 0 1.5708
+              rotation -0.11127819019206744 0.7027138595001513 -0.7027164407170077 3.3632363654493433
               children [
                 Shape {
-                  appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 1 metalness 0 }
-                  geometry Cylinder { radius 0.2286 height 0.18 }
+                  appearance PBRAppearance {
+                    baseColor 0.05 0.05 0.05
+                    roughness 1
+                    metalness 0
+                  }
+                  geometry Cylinder {
+                    height 0.18
+                    radius 0.2286
+                  }
                 }
                 Shape {
-                  appearance PBRAppearance { baseColor 0.9 0.1 0.1 roughness 0.4 metalness 0 }
-                  geometry Box { size 0.43434 0.05 0.19 }
+                  appearance PBRAppearance {
+                    baseColor 0.9 0.1 0.1
+                    roughness 0.4
+                    metalness 0
+                  }
+                  geometry Box {
+                    size 0.43434 0.05 0.19
+                  }
                 }
               ]
               name "wheel_rl"
               contactMaterial "wheel"
-              boundingObject Cylinder { radius 0.2286 height 0.18 }
-              physics Physics { density -1 mass 12 }
+              boundingObject Cylinder {
+                height 0.18
+                radius 0.2286
+              }
+              physics Physics {
+                density -1
+                mass 12
+              }
             }
           }
         ]
         name "wheel_rl_carrier"
-        boundingObject Box { size 0.15 0.12 0.08 }
-        physics Physics { density -1 mass 4 }
+        boundingObject Box {
+          size 0.15 0.12 0.08
+        }
+        physics Physics {
+          density -1
+          mass 4
+        }
       }
     }
     SliderJoint {
       jointParameters JointParameters {
-        axis 0 0 1
+        position 0.038080216254484586
         minStop -0.12
         maxStop 0.12
         springConstant 7000
         dampingConstant 800
       }
       endPoint DEF WHEEL_WHEEL_RR_CARRIER Solid {
-        translation -0.6 -0.55 -0.4364
+        translation -0.6 -0.55 -0.3983197837455154
         children [
           Shape {
-            appearance PBRAppearance { baseColor 0.2 0.2 0.2 roughness 0.8 metalness 0.3 }
-            geometry Box { size 0.15 0.12 0.08 }
+            appearance PBRAppearance {
+              baseColor 0.2 0.2 0.2
+              roughness 0.8
+              metalness 0.3
+            }
+            geometry Box {
+              size 0.15 0.12 0.08
+            }
           }
           Pose {
             translation 0 0.125 0.1157
             rotation 1 0 0 -0.824016
             children [
               Shape {
-                appearance PBRAppearance { baseColor 0.15 0.15 0.15 roughness 0.7 metalness 0.4 }
-                geometry Box { size 0.08 0.09 0.340655 }
+                appearance PBRAppearance {
+                  baseColor 0.15 0.15 0.15
+                  roughness 0.7
+                  metalness 0.4
+                }
+                geometry Box {
+                  size 0.08 0.09 0.340655
+                }
               }
             ]
           }
           HingeJoint {
             jointParameters HingeJointParameters {
+              position 321.2896596821883
               axis 0 1 0
-              anchor 0 0 0
             }
             device [
-              RotationalMotor { name "wheel_rr" maxVelocity 30 maxTorque 200 }
+              RotationalMotor {
+                name "wheel_rr"
+                maxVelocity 30
+                maxTorque 200
+              }
             ]
             endPoint DEF WHEEL_WHEEL_RR Solid {
-              translation 0 0 0
-              rotation 1 0 0 1.5708
+              rotation -0.8431615326037785 -0.38018256673089157 0.3801839632219627 4.5426101531129595
               children [
                 Shape {
-                  appearance PBRAppearance { baseColor 0.05 0.05 0.05 roughness 1 metalness 0 }
-                  geometry Cylinder { radius 0.2286 height 0.18 }
+                  appearance PBRAppearance {
+                    baseColor 0.05 0.05 0.05
+                    roughness 1
+                    metalness 0
+                  }
+                  geometry Cylinder {
+                    height 0.18
+                    radius 0.2286
+                  }
                 }
                 Shape {
-                  appearance PBRAppearance { baseColor 0.9 0.1 0.1 roughness 0.4 metalness 0 }
-                  geometry Box { size 0.43434 0.05 0.19 }
+                  appearance PBRAppearance {
+                    baseColor 0.9 0.1 0.1
+                    roughness 0.4
+                    metalness 0
+                  }
+                  geometry Box {
+                    size 0.43434 0.05 0.19
+                  }
                 }
               ]
               name "wheel_rr"
               contactMaterial "wheel"
-              boundingObject Cylinder { radius 0.2286 height 0.18 }
-              physics Physics { density -1 mass 12 }
+              boundingObject Cylinder {
+                height 0.18
+                radius 0.2286
+              }
+              physics Physics {
+                density -1
+                mass 12
+              }
             }
           }
         ]
         name "wheel_rr_carrier"
-        boundingObject Box { size 0.15 0.12 0.08 }
-        physics Physics { density -1 mass 4 }
+        boundingObject Box {
+          size 0.15 0.12 0.08
+        }
+        physics Physics {
+          density -1
+          mass 4
+        }
       }
     }
-    Camera { translation 0.895 0 0.355 name "camera" width 640 height 480 }
+    Camera {
+      translation 0.895 0 0.355
+      width 640
+      height 480
+    }
     Pose {
       translation 0.905 0 0.355
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.1 0.3 0.95 emissiveColor 0 0.1 0.35 roughness 0.4 metalness 0.2 }
-          geometry Sphere { radius 0.05 }
+          appearance PBRAppearance {
+            baseColor 0.1 0.3 0.95
+            roughness 0.4
+            metalness 0.2
+            emissiveColor 0 0.1 0.35
+          }
+          geometry Sphere {
+            radius 0.05
+          }
         }
       ]
     }
@@ -5294,7 +5559,7 @@ Robot {
       translation 0 0 30
       rotation 0 1 0 1.5708
       name "map_camera"
-      fieldOfView 1.0
+      fieldOfView 1
       width 400
       height 400
     }
@@ -5312,8 +5577,15 @@ Robot {
       translation 0 0 0.355
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.95 0.5 0.1 emissiveColor 0.35 0.15 0 roughness 0.4 metalness 0.2 }
-          geometry Sphere { radius 0.06 }
+          appearance PBRAppearance {
+            baseColor 0.95 0.5 0.1
+            roughness 0.4
+            metalness 0.2
+            emissiveColor 0.35 0.15 0
+          }
+          geometry Sphere {
+            radius 0.06
+          }
         }
       ]
     }
@@ -5321,20 +5593,33 @@ Robot {
       translation 0.865 0.22 -0.1
       rotation 0 0 1 0.3
       name "ds_left"
-      lookupTable [ 0 0 0, 8 8 0 ]
+      lookupTable [
+        0 0 0
+        8 8 0
+      ]
     }
     DistanceSensor {
       translation 0.865 -0.22 -0.1
       rotation 0 0 1 -0.3
       name "ds_right"
-      lookupTable [ 0 0 0, 8 8 0 ]
+      lookupTable [
+        0 0 0
+        8 8 0
+      ]
     }
     Pose {
       translation 0.865 0.22 -0.1
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.95 0.85 0.1 emissiveColor 0.3 0.25 0 roughness 0.4 metalness 0.2 }
-          geometry Sphere { radius 0.045 }
+          appearance PBRAppearance {
+            baseColor 0.95 0.85 0.1
+            roughness 0.4
+            metalness 0.2
+            emissiveColor 0.3 0.25 0
+          }
+          geometry Sphere {
+            radius 0.045
+          }
         }
       ]
     }
@@ -5342,8 +5627,15 @@ Robot {
       translation 0.865 -0.22 -0.1
       children [
         Shape {
-          appearance PBRAppearance { baseColor 0.95 0.85 0.1 emissiveColor 0.3 0.25 0 roughness 0.4 metalness 0.2 }
-          geometry Sphere { radius 0.045 }
+          appearance PBRAppearance {
+            baseColor 0.95 0.85 0.1
+            roughness 0.4
+            metalness 0.2
+            emissiveColor 0.3 0.25 0
+          }
+          geometry Sphere {
+            radius 0.045
+          }
         }
       ]
     }
@@ -5363,36 +5655,48 @@ Robot {
       rotation 0 0 1 0.7854
       children [
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
-          geometry Sphere { radius 0.05 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            roughness 0.3
+            metalness 0.6
+            emissiveColor 0.3 0 0.3
+          }
+          geometry Sphere {
+            radius 0.05
+          }
         }
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 transparency 0.9 roughness 1 metalness 0 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            transparency 0.9
+            roughness 1
+            metalness 0
+          }
           geometry IndexedFaceSet {
             coord Coordinate {
               point [
                 0 0 -0.09
                 3.6288 -7.1297 -0.09
-                4.5718 -6.5650 -0.09
+                4.5718 -6.565 -0.09
                 5.4285 -5.8764 -0.09
                 6.1827 -5.0769 -0.09
                 6.8202 -4.1815 -0.09
-                7.3290 -3.2072 -0.09
+                7.329 -3.2072 -0.09
                 7.6994 -2.1724 -0.09
                 7.9245 -1.0965 -0.09
-                8.0000 0.0000 -0.09
+                8 0 -0.09
                 7.9245 1.0965 -0.09
                 7.6994 2.1724 -0.09
-                7.3290 3.2072 -0.09
+                7.329 3.2072 -0.09
                 6.8202 4.1815 -0.09
                 6.1827 5.0769 -0.09
                 5.4285 5.8764 -0.09
-                4.5718 6.5650 -0.09
+                4.5718 6.565 -0.09
                 3.6288 7.1297 -0.09
               ]
             }
             coordIndex [
-              0 1 2 -1 0 2 3 -1 0 3 4 -1 0 4 5 -1 0 5 6 -1 0 6 7 -1 0 7 8 -1 0 8 9 -1 0 9 10 -1 0 10 11 -1 0 11 12 -1 0 12 13 -1 0 13 14 -1 0 14 15 -1 0 15 16 -1 0 16 17 -1 0 2 1 -1 0 3 2 -1 0 4 3 -1 0 5 4 -1 0 6 5 -1 0 7 6 -1 0 8 7 -1 0 9 8 -1 0 10 9 -1 0 11 10 -1 0 12 11 -1 0 13 12 -1 0 14 13 -1 0 15 14 -1 0 16 15 -1 0 17 16 -1
+              0, 1, 2, -1, 0, 2, 3, -1, 0, 3, 4, -1, 0, 4, 5, -1, 0, 5, 6, -1, 0, 6, 7, -1, 0, 7, 8, -1, 0, 8, 9, -1, 0, 9, 10, -1, 0, 10, 11, -1, 0, 11, 12, -1, 0, 12, 13, -1, 0, 13, 14, -1, 0, 14, 15, -1, 0, 15, 16, -1, 0, 16, 17, -1, 0, 2, 1, -1, 0, 3, 2, -1, 0, 4, 3, -1, 0, 5, 4, -1, 0, 6, 5, -1, 0, 7, 6, -1, 0, 8, 7, -1, 0, 9, 8, -1, 0, 10, 9, -1, 0, 11, 10, -1, 0, 12, 11, -1, 0, 13, 12, -1, 0, 14, 13, -1, 0, 15, 14, -1, 0, 16, 15, -1, 0, 17, 16, -1
             ]
           }
         }
@@ -5414,36 +5718,48 @@ Robot {
       rotation 0 0 1 -0.7854
       children [
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
-          geometry Sphere { radius 0.05 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            roughness 0.3
+            metalness 0.6
+            emissiveColor 0.3 0 0.3
+          }
+          geometry Sphere {
+            radius 0.05
+          }
         }
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 transparency 0.9 roughness 1 metalness 0 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            transparency 0.9
+            roughness 1
+            metalness 0
+          }
           geometry IndexedFaceSet {
             coord Coordinate {
               point [
                 0 0 -0.08
                 3.6288 -7.1297 -0.08
-                4.5718 -6.5650 -0.08
+                4.5718 -6.565 -0.08
                 5.4285 -5.8764 -0.08
                 6.1827 -5.0769 -0.08
                 6.8202 -4.1815 -0.08
-                7.3290 -3.2072 -0.08
+                7.329 -3.2072 -0.08
                 7.6994 -2.1724 -0.08
                 7.9245 -1.0965 -0.08
-                8.0000 0.0000 -0.08
+                8 0 -0.08
                 7.9245 1.0965 -0.08
                 7.6994 2.1724 -0.08
-                7.3290 3.2072 -0.08
+                7.329 3.2072 -0.08
                 6.8202 4.1815 -0.08
                 6.1827 5.0769 -0.08
                 5.4285 5.8764 -0.08
-                4.5718 6.5650 -0.08
+                4.5718 6.565 -0.08
                 3.6288 7.1297 -0.08
               ]
             }
             coordIndex [
-              0 1 2 -1 0 2 3 -1 0 3 4 -1 0 4 5 -1 0 5 6 -1 0 6 7 -1 0 7 8 -1 0 8 9 -1 0 9 10 -1 0 10 11 -1 0 11 12 -1 0 12 13 -1 0 13 14 -1 0 14 15 -1 0 15 16 -1 0 16 17 -1 0 2 1 -1 0 3 2 -1 0 4 3 -1 0 5 4 -1 0 6 5 -1 0 7 6 -1 0 8 7 -1 0 9 8 -1 0 10 9 -1 0 11 10 -1 0 12 11 -1 0 13 12 -1 0 14 13 -1 0 15 14 -1 0 16 15 -1 0 17 16 -1
+              0, 1, 2, -1, 0, 2, 3, -1, 0, 3, 4, -1, 0, 4, 5, -1, 0, 5, 6, -1, 0, 6, 7, -1, 0, 7, 8, -1, 0, 8, 9, -1, 0, 9, 10, -1, 0, 10, 11, -1, 0, 11, 12, -1, 0, 12, 13, -1, 0, 13, 14, -1, 0, 14, 15, -1, 0, 15, 16, -1, 0, 16, 17, -1, 0, 2, 1, -1, 0, 3, 2, -1, 0, 4, 3, -1, 0, 5, 4, -1, 0, 6, 5, -1, 0, 7, 6, -1, 0, 8, 7, -1, 0, 9, 8, -1, 0, 10, 9, -1, 0, 11, 10, -1, 0, 12, 11, -1, 0, 13, 12, -1, 0, 14, 13, -1, 0, 15, 14, -1, 0, 16, 15, -1, 0, 17, 16, -1
             ]
           }
         }
@@ -5465,36 +5781,48 @@ Robot {
       rotation 0 0 1 2.3562
       children [
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
-          geometry Sphere { radius 0.05 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            roughness 0.3
+            metalness 0.6
+            emissiveColor 0.3 0 0.3
+          }
+          geometry Sphere {
+            radius 0.05
+          }
         }
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 transparency 0.9 roughness 1 metalness 0 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            transparency 0.9
+            roughness 1
+            metalness 0
+          }
           geometry IndexedFaceSet {
             coord Coordinate {
               point [
                 0 0 -0.07
                 3.6288 -7.1297 -0.07
-                4.5718 -6.5650 -0.07
+                4.5718 -6.565 -0.07
                 5.4285 -5.8764 -0.07
                 6.1827 -5.0769 -0.07
                 6.8202 -4.1815 -0.07
-                7.3290 -3.2072 -0.07
+                7.329 -3.2072 -0.07
                 7.6994 -2.1724 -0.07
                 7.9245 -1.0965 -0.07
-                8.0000 0.0000 -0.07
+                8 0 -0.07
                 7.9245 1.0965 -0.07
                 7.6994 2.1724 -0.07
-                7.3290 3.2072 -0.07
+                7.329 3.2072 -0.07
                 6.8202 4.1815 -0.07
                 6.1827 5.0769 -0.07
                 5.4285 5.8764 -0.07
-                4.5718 6.5650 -0.07
+                4.5718 6.565 -0.07
                 3.6288 7.1297 -0.07
               ]
             }
             coordIndex [
-              0 1 2 -1 0 2 3 -1 0 3 4 -1 0 4 5 -1 0 5 6 -1 0 6 7 -1 0 7 8 -1 0 8 9 -1 0 9 10 -1 0 10 11 -1 0 11 12 -1 0 12 13 -1 0 13 14 -1 0 14 15 -1 0 15 16 -1 0 16 17 -1 0 2 1 -1 0 3 2 -1 0 4 3 -1 0 5 4 -1 0 6 5 -1 0 7 6 -1 0 8 7 -1 0 9 8 -1 0 10 9 -1 0 11 10 -1 0 12 11 -1 0 13 12 -1 0 14 13 -1 0 15 14 -1 0 16 15 -1 0 17 16 -1
+              0, 1, 2, -1, 0, 2, 3, -1, 0, 3, 4, -1, 0, 4, 5, -1, 0, 5, 6, -1, 0, 6, 7, -1, 0, 7, 8, -1, 0, 8, 9, -1, 0, 9, 10, -1, 0, 10, 11, -1, 0, 11, 12, -1, 0, 12, 13, -1, 0, 13, 14, -1, 0, 14, 15, -1, 0, 15, 16, -1, 0, 16, 17, -1, 0, 2, 1, -1, 0, 3, 2, -1, 0, 4, 3, -1, 0, 5, 4, -1, 0, 6, 5, -1, 0, 7, 6, -1, 0, 8, 7, -1, 0, 9, 8, -1, 0, 10, 9, -1, 0, 11, 10, -1, 0, 12, 11, -1, 0, 13, 12, -1, 0, 14, 13, -1, 0, 15, 14, -1, 0, 16, 15, -1, 0, 17, 16, -1
             ]
           }
         }
@@ -5516,42 +5844,61 @@ Robot {
       rotation 0 0 1 -2.3562
       children [
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
-          geometry Sphere { radius 0.05 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            roughness 0.3
+            metalness 0.6
+            emissiveColor 0.3 0 0.3
+          }
+          geometry Sphere {
+            radius 0.05
+          }
         }
         Shape {
-          appearance PBRAppearance { baseColor 1 0 1 transparency 0.9 roughness 1 metalness 0 }
+          appearance PBRAppearance {
+            baseColor 1 0 1
+            transparency 0.9
+            roughness 1
+            metalness 0
+          }
           geometry IndexedFaceSet {
             coord Coordinate {
               point [
                 0 0 -0.06
                 3.6288 -7.1297 -0.06
-                4.5718 -6.5650 -0.06
+                4.5718 -6.565 -0.06
                 5.4285 -5.8764 -0.06
                 6.1827 -5.0769 -0.06
                 6.8202 -4.1815 -0.06
-                7.3290 -3.2072 -0.06
+                7.329 -3.2072 -0.06
                 7.6994 -2.1724 -0.06
                 7.9245 -1.0965 -0.06
-                8.0000 0.0000 -0.06
+                8 0 -0.06
                 7.9245 1.0965 -0.06
                 7.6994 2.1724 -0.06
-                7.3290 3.2072 -0.06
+                7.329 3.2072 -0.06
                 6.8202 4.1815 -0.06
                 6.1827 5.0769 -0.06
                 5.4285 5.8764 -0.06
-                4.5718 6.5650 -0.06
+                4.5718 6.565 -0.06
                 3.6288 7.1297 -0.06
               ]
             }
             coordIndex [
-              0 1 2 -1 0 2 3 -1 0 3 4 -1 0 4 5 -1 0 5 6 -1 0 6 7 -1 0 7 8 -1 0 8 9 -1 0 9 10 -1 0 10 11 -1 0 11 12 -1 0 12 13 -1 0 13 14 -1 0 14 15 -1 0 15 16 -1 0 16 17 -1 0 2 1 -1 0 3 2 -1 0 4 3 -1 0 5 4 -1 0 6 5 -1 0 7 6 -1 0 8 7 -1 0 9 8 -1 0 10 9 -1 0 11 10 -1 0 12 11 -1 0 13 12 -1 0 14 13 -1 0 15 14 -1 0 16 15 -1 0 17 16 -1
+              0, 1, 2, -1, 0, 2, 3, -1, 0, 3, 4, -1, 0, 4, 5, -1, 0, 5, 6, -1, 0, 6, 7, -1, 0, 7, 8, -1, 0, 8, 9, -1, 0, 9, 10, -1, 0, 10, 11, -1, 0, 11, 12, -1, 0, 12, 13, -1, 0, 13, 14, -1, 0, 14, 15, -1, 0, 15, 16, -1, 0, 16, 17, -1, 0, 2, 1, -1, 0, 3, 2, -1, 0, 4, 3, -1, 0, 5, 4, -1, 0, 6, 5, -1, 0, 7, 6, -1, 0, 8, 7, -1, 0, 9, 8, -1, 0, 10, 9, -1, 0, 11, 10, -1, 0, 12, 11, -1, 0, 13, 12, -1, 0, 14, 13, -1, 0, 15, 14, -1, 0, 16, 15, -1, 0, 17, 16, -1
             ]
           }
         }
       ]
     }
   ]
-  boundingObject Box { size 1.83 0.8 0.61 }
-  physics Physics { density -1 mass 100 }
+  name "ugv_rover"
+  boundingObject Box {
+    size 1.83 0.8 0.61
+  }
+  physics Physics {
+    density -1
+    mass 100
+  }
+  controller "ardupilot_bridge"
 }

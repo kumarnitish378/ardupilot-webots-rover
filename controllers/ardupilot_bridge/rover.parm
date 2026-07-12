@@ -1,0 +1,33 @@
+# ArduPilot Rover parameters for the Webots Ackermann UGV
+# (front-wheel steering + rear-wheel drive). Load with:
+#   sim_vehicle.py ... --add-param-file=<this file>
+
+# Servo output mapping (matches ardupilot_bridge.py):
+SERVO1_FUNCTION 26     # GroundSteering  -> front steer motors
+SERVO3_FUNCTION 70     # Throttle        -> rear drive motors
+
+# Steering geometry: min turn radius ~= wheelbase / tan(max_steer)
+#   = 1.20 / tan(0.575 rad) ~= 1.85 m
+TURN_RADIUS 1.85
+
+# Loop rate: the rendering-heavy Webots world delivers sensor frames at
+# ~41 Hz (gyro ~62 Hz), below the 50 Hz default. Targeting 30 Hz makes the
+# "main loop slow" and "gyro rate < loop*1.8" pre-arm checks pass legitimately
+# (41 >= 30, 62 >= 54). Read at startup, so it needs a SITL (re)start.
+SCHED_LOOP_RATE 30
+
+# Heading source: use ONLY the compass (which SITL derives from the Webots
+# attitude we send in the FDM) - do NOT blend GPS course-over-ground, which
+# fought the compass and made the heading wander. One clean source from Webots.
+EK3_SRC1_YAW 1
+
+# Keep the SITL GPS a faithful copy of the Webots GPS (no synthetic noise/lag),
+# so ArduPilot's position tracks the Webots rover exactly.
+SIM_GPS1_NOISE 0
+SIM_GPS1_GLTCH_X 0
+SIM_GPS1_GLTCH_Y 0
+
+# Convenience for bench testing in the sim:
+ARMING_CHECK 0         # skip pre-arm checks so you can arm immediately
+CRUISE_SPEED 2.0       # m/s target in AUTO/GUIDED
+CRUISE_THROTTLE 40     # % feed-forward throttle at CRUISE_SPEED
