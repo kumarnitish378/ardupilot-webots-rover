@@ -7,8 +7,18 @@ SERVO1_FUNCTION 26     # GroundSteering  -> front steer motors
 SERVO3_FUNCTION 70     # Throttle        -> rear drive motors
 
 # Steering geometry: min turn radius ~= wheelbase / tan(max_steer)
-#   = 1.20 / tan(0.575 rad) ~= 1.85 m
-TURN_RADIUS 1.85
+#   = 1.20 / tan(0.70 rad) ~= 1.42 m  (steer limit raised 0.575 -> 0.70 rad)
+TURN_RADIUS 1.42
+
+# --- Navigation / path-tracking tuning (measured on a 20 m square) ---
+# Baseline (stock WP_SPEED 5, R 3) tracked at RMS 1.90 m / MAX 4.28 m; this set
+# brings it to ~RMS 0.94 m / MAX 2.62 m. Order per ArduPilot's 4.3+ nav guide:
+# slow to a corner-able speed, then tune the velocity controller (PSC_VEL).
+WP_SPEED 1.5           # AUTO target speed (5.0 default was too fast to corner)
+WP_RADIUS 2.0          # start turning 2 m out (3.0 cut corners; 1.0 overshot)
+PSC_VEL_P 2.0          # velocity-controller P: the main path-tracking gain (was 1.0)
+PSC_VEL_I 0.4          # ~20% of P
+PSC_VEL_D 0.1          # <=10% of P, sharpens corners without oscillating
 
 # Loop rate: the rendering-heavy Webots world delivers sensor frames at
 # ~41 Hz (gyro ~62 Hz), below the 50 Hz default. Targeting 30 Hz makes the
@@ -29,5 +39,5 @@ SIM_GPS1_GLTCH_Y 0
 
 # Convenience for bench testing in the sim:
 ARMING_CHECK 0         # skip pre-arm checks so you can arm immediately
-CRUISE_SPEED 2.0       # m/s target in AUTO/GUIDED
+CRUISE_SPEED 1.5       # m/s (matches WP_SPEED; slow enough to corner cleanly)
 CRUISE_THROTTLE 40     # % feed-forward throttle at CRUISE_SPEED

@@ -5111,8 +5111,8 @@ Robot {
             jointParameters HingeJointParameters {
               position 0.04719605174746968
               axis 0 0 1
-              minStop -0.575
-              maxStop 0.575
+              minStop -0.70
+              maxStop 0.70
             }
             device [
               RotationalMotor {
@@ -5246,8 +5246,8 @@ Robot {
             jointParameters HingeJointParameters {
               position 0.02911014115186508
               axis 0 0 1
-              minStop -0.575
-              maxStop 0.575
+              minStop -0.70
+              maxStop 0.70
             }
             device [
               RotationalMotor {

@@ -39,7 +39,7 @@ SITL_ADDRESS = os.environ.get("SITL_ADDRESS", "172.21.7.109")  # WSL IP (where S
 PORT = 9002  # bind here for controls; FDM is sent to SITL_ADDRESS:PORT+1
 
 # Must match the rover model / world.
-MAX_STEER_ANGLE = 0.575   # rad, front-steer joint limit
+MAX_STEER_ANGLE = 0.70    # rad (~40 deg), front-steer joint limit -> ~1.42 m turn radius
 MAX_WHEEL_SPEED = 20.0    # rad/s, rear drive-motor maxVelocity
 WHEELBASE = 1.20
 TRACK_WIDTH = 1.10
@@ -202,7 +202,7 @@ def main():
                               f"{_dbg['c3']:.4f},{_dbg['steer']:.4f},{_dbg['rl']:.3f},{_dbg['rr']:.3f},"
                               f"{p[0]:.3f},{p[1]:.3f},{yaw:.1f}\n")
                     log.flush()
-                    print("GPS Yaw: {:.1f} deg".format(imu.getRollPitchYaw()[2] * 180.0 / math.pi))
+                    # print("GPS Yaw: {:.1f} deg".format(imu.getRollPitchYaw()[2] * 180.0 / math.pi))
 
         if writable and sitl_addr is not None:
             sock.sendto(get_fdm(), sitl_addr)

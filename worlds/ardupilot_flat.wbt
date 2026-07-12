@@ -152,8 +152,8 @@ Robot {
           HingeJoint {
             jointParameters HingeJointParameters {
               axis 0 0 1
-              minStop -0.575
-              maxStop 0.575
+              minStop -0.70
+              maxStop 0.70
             }
             device [
               RotationalMotor { name "steer_fl" controlPID 100 0 10 maxVelocity 3 maxTorque 2000 }
@@ -230,8 +230,8 @@ Robot {
           HingeJoint {
             jointParameters HingeJointParameters {
               axis 0 0 1
-              minStop -0.575
-              maxStop 0.575
+              minStop -0.70
+              maxStop 0.70
             }
             device [
               RotationalMotor { name "steer_fr" controlPID 100 0 10 maxVelocity 3 maxTorque 2000 }
