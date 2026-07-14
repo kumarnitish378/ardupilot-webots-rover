@@ -1,14 +1,19 @@
 # Webots UGV Rover
 
 A [Webots](https://cyberbotics.com/) simulation of an autonomous four-wheel
-UGV rover, built as a stepping stone toward an ArduPilot Rover SITL bridge.
-The rover uses **front-wheel steering + rear-wheel drive** (with an Ackermann
-kinematic differential), independent suspension on every wheel, and a full
-sensor suite. It can be driven manually from the keyboard, run a reactive
-autonomous obstacle-avoidance loop, or take commands from an external file.
+UGV rover, bridged to **ArduPilot Rover SITL**. The rover uses **front-wheel
+steering + rear-wheel drive** (with an Ackermann kinematic differential),
+independent suspension on every wheel, and a full sensor suite.
 
-Two worlds are included: a small test **arena** with rocks/trees/obstacles,
-and a **real-world map** generated from OpenStreetMap.
+It runs in two ways:
+
+- **ArduPilot SITL** — fly real missions (AUTO/GUIDED) from a ground station,
+  with Webots supplying the GPS/IMU and ArduPilot driving the wheels.
+- **Manual / reactive** — drive from the keyboard, run a reactive
+  obstacle-avoidance loop, or take commands from an external file.
+
+Worlds are included for both, on a flat arena and on a **real-world map**
+generated from OpenStreetMap.
 
 > Developed and tested with **Webots R2025a** on Windows.
 
@@ -36,19 +41,26 @@ and a **real-world map** generated from OpenStreetMap.
 
 ```
 worlds/
-  ugv_rover.wbt            # test arena: rocks, trees, plants, dunes
-  osm_rover.wbt            # real OSM map (Greater Noida) + geofence
-  my_first_simulation.wbt  # original e-puck example world
+  ardupilot_flat.wbt    # flat arena  + ArduPilot bridge  (best for missions)
+  ardupilot_rover.wbt   # real OSM map + ArduPilot bridge
+  ugv_rover.wbt         # test arena: rocks, trees, plants, dunes  (manual)
+  osm_rover.wbt         # real OSM map (Greater Noida) + geofence  (manual)
 controllers/
-  ugv_teleop/             # main rover controller (C)
+  ardupilot_bridge/     # Webots <-> ArduPilot SITL bridge (Python)
+    ardupilot_bridge.py
+    rover.parm          # ArduPilot params: servo map + navigation tuning
+  ugv_teleop/           # manual / reactive rover controller (C)
     ugv_teleop.c
-  epuck_go_forward/       # original example controller
+tools/
+  mav_ctl.py            # MAVLink helper: arm, missions, tuning measurement
+docs/
+  layoutOfRover.png     # rover design blueprint
 LICENSE
 README.md
 ```
 
-The rover model is defined inline in the two `*_rover.wbt` worlds (identical
-Robot node in both).
+The rover model is defined inline in each world (identical Robot node in all
+four); the `controller` field selects the bridge or the manual controller.
 
 ---
 
@@ -64,7 +76,13 @@ git clone https://github.com/kumarnitish378/ardupilot-webots-rover.git
 
 ### 3. Open a world
 In Webots: **File → Open World…** and choose one of:
-- `worlds/osm_rover.wbt` — the real-world map (recommended).
+
+*ArduPilot SITL* (see [Running with ArduPilot SITL](#running-with-ardupilot-sitl)):
+- `worlds/ardupilot_flat.wbt` — flat arena, best for missions.
+- `worlds/ardupilot_rover.wbt` — the real OSM map.
+
+*Manual / reactive driving:*
+- `worlds/osm_rover.wbt` — the real-world map.
 - `worlds/ugv_rover.wbt` — the obstacle test arena.
 
 ### 4. Build the controller (first run only)
@@ -79,6 +97,50 @@ Press **▶ Play**, then **click inside the 3D view** so it has keyboard focus.
 ### 6. Show the camera overlays
 Use the **Overlays** menu in Webots' menu bar to show the `camera` (front FPV)
 and `map_camera` (top-down) feeds if they aren't already visible.
+
+---
+
+## Running with ArduPilot SITL
+
+The bridge speaks ArduPilot's `webots-python` SITL protocol: Webots sends the
+FDM (GPS/IMU/velocity, converted ENU→NED) on UDP `:9003`, and ArduPilot sends
+back servo outputs on `:9002` (SERVO1 = steering, SERVO3 = throttle).
+
+1. Open `worlds/ardupilot_flat.wbt` (or `ardupilot_rover.wbt`) and press
+   **▶ Play**. The bridge waits for SITL to connect.
+2. Start ArduPilot Rover SITL, pointing it at the machine running Webots:
+   ```bash
+   sim_vehicle.py -v Rover --model webots-python \
+     --sim-address=<windows-host-ip> \
+     --custom-location=28.5016472,77.3921611,0,0 \
+     --add-param-file=controllers/ardupilot_bridge/rover.parm \
+     --console --map
+   ```
+   On WSL, `--sim-address` is the Windows host IP (`ip route show default`),
+   and `SITL_ADDRESS` in `ardupilot_bridge.py` is the WSL IP (`hostname -I`) —
+   WSL2 does not share `localhost`. Allow inbound UDP 9002 in Windows Firewall.
+3. Plan and run a mission from any ground station (QGroundControl, Mission
+   Planner), or use the bundled helper:
+   ```bash
+   python tools/mav_ctl.py arm            # force-arm
+   python tools/mav_ctl.py square 20      # drive a 20 m square in AUTO
+   python tools/mav_ctl.py track 20       # same, but measure tracking error
+   python tools/mav_ctl.py setp WP_SPEED 1.5   # set any parameter
+   ```
+
+### Navigation tuning
+
+`rover.parm` carries a tuned navigation set. Stock ArduPilot defaults track
+this rover poorly (`WP_SPEED 5` m/s is far faster than a 1.42 m turn radius can
+corner), so the key changes are a corner-able speed, a tuned velocity
+controller, and a wider steering limit:
+
+| | Cross-track RMS | Max corner error |
+|---|---|---|
+| Stock defaults | 1.90 m | 4.28 m |
+| Tuned (`rover.parm`) | **0.47 m** | **1.22 m** |
+
+Measured with `tools/mav_ctl.py track 20` on a 20 m square.
 
 ---
 
@@ -160,10 +222,9 @@ different area:
 
 ## Roadmap
 
-- Replace the manual/reactive controller with an **ArduPilot Rover SITL**
-  bridge (socket-based, à la `ardupilot/libraries/SITL/examples/Webots_Python`).
+- ~~ArduPilot Rover SITL bridge~~ — done (`controllers/ardupilot_bridge/`).
 - All-around obstacle sensing (fix the radar cross-section issue).
-- Software geofence / mission handling via ArduPilot.
+- Obstacle avoidance fed into ArduPilot (proximity / simple-avoidance).
 
 ---
 
