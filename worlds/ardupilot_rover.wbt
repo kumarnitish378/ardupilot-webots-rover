@@ -984,6 +984,7 @@ Road {
   startJunction "3752803970"
   endJunction "3752803990"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1020,6 +1021,7 @@ Road {
   startJunction "4685422921"
   endJunction "4685422915"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -1053,6 +1055,7 @@ Road {
   id "474630582"
   startJunction "4685422911"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -1079,6 +1082,7 @@ Road {
   id "474630588"
   startJunction "4685422922"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -1110,6 +1114,7 @@ Road {
   startJunction "6648482748"
   endJunction "6648482745"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1142,6 +1147,7 @@ Road {
   startJunction "6702220060"
   endJunction "6702220058"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1174,6 +1180,7 @@ Road {
   id "1041949685"
   startJunction "9592024701"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1208,6 +1215,7 @@ Road {
   startJunction "9592024705"
   endJunction "3752803967"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1236,6 +1244,7 @@ Road {
   startJunction "6648482745"
   endJunction "9592024706"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1267,6 +1276,7 @@ Road {
   id "1071429809"
   endJunction "9832178602"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1294,6 +1304,7 @@ Road {
   id "1071431094"
   startJunction "9832261714"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1319,6 +1330,7 @@ Road {
   name "road(12)"
   id "1071431095"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1340,6 +1352,7 @@ Road {
   id "1071431213"
   startJunction "9832277540"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1367,6 +1380,7 @@ Road {
   id "1071431214"
   startJunction "9832178608"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1398,6 +1412,7 @@ Road {
   startJunction "9832178610"
   endJunction "9832282587"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1435,6 +1450,7 @@ Road {
   id "1071437935"
   endJunction "9832292984"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1463,6 +1479,7 @@ Road {
   id "1071437936"
   startJunction "9832293011"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1488,6 +1505,7 @@ Road {
   id "1071438373"
   endJunction "9832178590"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1516,6 +1534,7 @@ Road {
   id "1071438375"
   startJunction "9832327261"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1550,6 +1569,7 @@ Road {
   id "1071438376"
   endJunction "9832327262"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1574,6 +1594,7 @@ Road {
   id "1071438377"
   startJunction "3752803972"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1598,6 +1619,7 @@ Road {
   name "road(22)"
   id "1071442080"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1625,6 +1647,7 @@ Road {
   id "1071556338"
   endJunction "9833065778"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1650,6 +1673,7 @@ Road {
   startJunction "7228121949"
   endJunction "12866340883"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1681,6 +1705,7 @@ Road {
   id "86627023_1"
   endJunction "1026975895"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1711,6 +1736,7 @@ Road {
   id "86627051_1"
   endJunction "12866340883"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1739,6 +1765,7 @@ Road {
   startJunction "1026975895"
   endJunction "1026976063"
   width 16
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 4
   numberOfForwardLanes 2
   speedLimit 13.888889
@@ -1783,6 +1810,7 @@ Road {
   id "88405580_2"
   startJunction "1026976063"
   width 16
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 4
   numberOfForwardLanes 2
   speedLimit 13.888889
@@ -1824,6 +1852,7 @@ Road {
   startJunction "12866340883"
   endJunction "1026976063"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1855,6 +1884,7 @@ Road {
   id "86627051_3"
   startJunction "1026976063"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1883,6 +1913,7 @@ Road {
   id "371729062_1"
   endJunction "9845867775"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -1912,6 +1943,7 @@ Road {
   startJunction "4685422918"
   endJunction "4685422921"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -1946,6 +1978,7 @@ Road {
   startJunction "4685422915"
   endJunction "1007396383"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -1980,6 +2013,7 @@ Road {
   id "474630598_1"
   endJunction "4685422911"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -2007,6 +2041,7 @@ Road {
   startJunction "4685422911"
   endJunction "4685422915"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -2045,6 +2080,7 @@ Road {
   startJunction "4685422921"
   endJunction "4685422922"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -2078,6 +2114,7 @@ Road {
   id "474630600_3"
   startJunction "4685422922"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -2117,6 +2154,7 @@ Road {
   startJunction "6648482745"
   endJunction "6648482744"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2149,6 +2187,7 @@ Road {
   startJunction "9832358996"
   endJunction "6702220060"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2182,6 +2221,7 @@ Road {
   id "1071442081_2"
   startJunction "6702220060"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2212,6 +2252,7 @@ Road {
   startJunction "1026975895"
   endJunction "6702220058"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2242,6 +2283,7 @@ Road {
   startJunction "7228121949"
   endJunction "9592024706"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2274,6 +2316,7 @@ Road {
   startJunction "9832178614"
   endJunction "9832178610"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2311,6 +2354,7 @@ Road {
   startJunction "7228121945"
   endJunction "9592024701"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2345,6 +2389,7 @@ Road {
   startJunction "9592024701"
   endJunction "9832178614"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2384,6 +2429,7 @@ Road {
   startJunction "9832178614"
   endJunction "9832178602"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2416,6 +2462,7 @@ Road {
   startJunction "9832178602"
   endJunction "9592024705"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2443,6 +2490,7 @@ Road {
   id "1071431096_1"
   endJunction "9832261714"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2467,6 +2515,7 @@ Road {
   id "1071431096_2"
   startJunction "9832261714"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2492,6 +2541,7 @@ Road {
   startJunction "3752803970"
   endJunction "9832277517"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2524,6 +2574,7 @@ Road {
   startJunction "9832277517"
   endJunction "9832327261"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2566,6 +2617,7 @@ Road {
   id "1071431212_2"
   startJunction "9832327261"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2593,6 +2645,7 @@ Road {
   startJunction "9832277540"
   endJunction "3752803970"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2627,6 +2680,7 @@ Road {
   startJunction "9832178610"
   endJunction "9832178608"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2659,6 +2713,7 @@ Road {
   startJunction "9832178608"
   endJunction "6648482746"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2696,6 +2751,7 @@ Road {
   startJunction "9592024706"
   endJunction "9832282587"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2730,6 +2786,7 @@ Road {
   startJunction "9832293002"
   endJunction "9832292984"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2765,6 +2822,7 @@ Road {
   startJunction "9832292984"
   endJunction "9832300923"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2815,6 +2873,7 @@ Road {
   startJunction "9832293011"
   endJunction "9832293002"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2848,6 +2907,7 @@ Road {
   startJunction "9832277517"
   endJunction "9832178590"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2880,6 +2940,7 @@ Road {
   startJunction "9832178590"
   endJunction "9832293011"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2912,6 +2973,7 @@ Road {
   startJunction "3752803967"
   endJunction "9832327262"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2948,6 +3010,7 @@ Road {
   startJunction "9832327262"
   endJunction "9832277540"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -2980,6 +3043,7 @@ Road {
   startJunction "9832293002"
   endJunction "3752803972"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3011,6 +3075,7 @@ Road {
   id "371729062_11"
   startJunction "3752803972"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3050,6 +3115,7 @@ Road {
   startJunction "9845867775"
   endJunction "9833065778"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3094,6 +3160,7 @@ Road {
   startJunction "9833065778"
   endJunction "3752803967"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3127,6 +3194,7 @@ Road {
   id "86627023_5"
   startJunction "4685422918"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -3152,6 +3220,7 @@ Road {
   startJunction "7228121949"
   endJunction "1007396383"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3183,6 +3252,7 @@ Road {
   startJunction "1007396383"
   endJunction "4685422918"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 27.777778
   lines []
@@ -3216,6 +3286,7 @@ Road {
   startJunction "6702220058"
   endJunction "1007395610"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3246,6 +3317,7 @@ Road {
   startJunction "1007395610"
   endJunction "9832358996"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3278,6 +3350,7 @@ Road {
   startJunction "9832358996"
   endJunction "6648482748"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3310,6 +3383,7 @@ Road {
   startJunction "6648482748"
   endJunction "9832300923"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3343,6 +3417,7 @@ Road {
   startJunction "9832300923"
   endJunction "3752803990"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3376,6 +3451,7 @@ Road {
   startJunction "3752803990"
   endJunction "6648482746"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3408,6 +3484,7 @@ Road {
   startJunction "6648482746"
   endJunction "6648482745"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3440,6 +3517,7 @@ Road {
   startJunction "1007395610"
   endJunction "6648482744"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3471,6 +3549,7 @@ Road {
   startJunction "6648482744"
   endJunction "7228121949"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3501,6 +3580,7 @@ Road {
   startJunction "9832282587"
   endJunction "7228121945"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
@@ -3544,6 +3624,7 @@ Road {
   startJunction "7228121945"
   endJunction "9845867775"
   width 4
+  roadBorderWidth [ 1.2 ]
   numberOfLanes 1
   speedLimit 13.888889
   lines []
