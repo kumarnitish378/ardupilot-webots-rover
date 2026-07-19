@@ -465,18 +465,22 @@ Robot {
     }
     Radar {
       translation 0.865 0.35 -0.1
-      rotation 0 0 1 0.7854
+      rotation 0 0 1 0.349
       name "radar_fl"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation 0.865 0.35 -0.09
-      rotation 0 0 1 0.7854
+      rotation 0 0 1 0.349
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
@@ -516,18 +520,22 @@ Robot {
     }
     Radar {
       translation 0.865 -0.35 -0.1
-      rotation 0 0 1 -0.7854
+      rotation 0 0 1 -0.349
       name "radar_fr"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation 0.865 -0.35 -0.08
-      rotation 0 0 1 -0.7854
+      rotation 0 0 1 -0.349
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
@@ -567,18 +575,22 @@ Robot {
     }
     Radar {
       translation -0.865 0.35 -0.1
-      rotation 0 0 1 2.3562
+      rotation 0 0 1 2.793
       name "radar_rl"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation -0.865 0.35 -0.07
-      rotation 0 0 1 2.3562
+      rotation 0 0 1 2.793
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
@@ -618,18 +630,22 @@ Robot {
     }
     Radar {
       translation -0.865 -0.35 -0.1
-      rotation 0 0 1 -2.3562
+      rotation 0 0 1 -2.793
       name "radar_rr"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation -0.865 -0.35 -0.06
-      rotation 0 0 1 -2.3562
+      rotation 0 0 1 -2.793
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
@@ -670,4 +686,77 @@ Robot {
   ]
   boundingObject Box { size 1.83 0.8 0.61 }
   physics Physics { density -1 mass 100 }
+}
+Robot {
+  translation 35 6 0.5
+  rotation 0 0 1 0
+  name "target_car"
+  controller "target_car"
+  radarCrossSection 10
+  children [
+    Shape {
+      appearance PBRAppearance { baseColor 0.95 0.45 0 roughness 0.5 metalness 0.4 }
+      geometry Box { size 2 0.9 0.5 }
+    }
+    Pose {
+      translation 0 0 0.35
+      children [
+        Shape {
+          appearance PBRAppearance { baseColor 0.1 0.1 0.12 roughness 0.3 metalness 0.5 }
+          geometry Box { size 1.1 0.82 0.28 }
+        }
+      ]
+    }
+    GPS { name "tgps" }
+    DEF TW_FL HingeJoint {
+      jointParameters HingeJointParameters { axis 0 1 0 anchor 0.7 0.5 -0.2 }
+      device [ RotationalMotor { name "tw_fl" maxVelocity 30 maxTorque 300 } ]
+      endPoint Solid {
+        translation 0.7 0.5 -0.2
+        rotation 1 0 0 1.5708
+        children [ Shape { appearance PBRAppearance { baseColor 0.05 0.05 0.05 } geometry Cylinder { radius 0.3 height 0.15 } } ]
+        name "tw_fl" contactMaterial "wheel"
+        boundingObject Cylinder { radius 0.3 height 0.15 }
+        physics Physics { density -1 mass 3 }
+      }
+    }
+    DEF TW_FR HingeJoint {
+      jointParameters HingeJointParameters { axis 0 1 0 anchor 0.7 -0.5 -0.2 }
+      device [ RotationalMotor { name "tw_fr" maxVelocity 30 maxTorque 300 } ]
+      endPoint Solid {
+        translation 0.7 -0.5 -0.2
+        rotation 1 0 0 1.5708
+        children [ Shape { appearance PBRAppearance { baseColor 0.05 0.05 0.05 } geometry Cylinder { radius 0.3 height 0.15 } } ]
+        name "tw_fr" contactMaterial "wheel"
+        boundingObject Cylinder { radius 0.3 height 0.15 }
+        physics Physics { density -1 mass 3 }
+      }
+    }
+    DEF TW_RL HingeJoint {
+      jointParameters HingeJointParameters { axis 0 1 0 anchor -0.7 0.5 -0.2 }
+      device [ RotationalMotor { name "tw_rl" maxVelocity 30 maxTorque 300 } ]
+      endPoint Solid {
+        translation -0.7 0.5 -0.2
+        rotation 1 0 0 1.5708
+        children [ Shape { appearance PBRAppearance { baseColor 0.05 0.05 0.05 } geometry Cylinder { radius 0.3 height 0.15 } } ]
+        name "tw_rl" contactMaterial "wheel"
+        boundingObject Cylinder { radius 0.3 height 0.15 }
+        physics Physics { density -1 mass 3 }
+      }
+    }
+    DEF TW_RR HingeJoint {
+      jointParameters HingeJointParameters { axis 0 1 0 anchor -0.7 -0.5 -0.2 }
+      device [ RotationalMotor { name "tw_rr" maxVelocity 30 maxTorque 300 } ]
+      endPoint Solid {
+        translation -0.7 -0.5 -0.2
+        rotation 1 0 0 1.5708
+        children [ Shape { appearance PBRAppearance { baseColor 0.05 0.05 0.05 } geometry Cylinder { radius 0.3 height 0.15 } } ]
+        name "tw_rr" contactMaterial "wheel"
+        boundingObject Cylinder { radius 0.3 height 0.15 }
+        physics Physics { density -1 mass 3 }
+      }
+    }
+  ]
+  boundingObject Box { size 2 0.9 0.5 }
+  physics Physics { density -1 mass 200 }
 }

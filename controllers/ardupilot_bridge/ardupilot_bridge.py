@@ -82,6 +82,35 @@ accel = robot.getDevice("accel")
 for s in (gps, imu, gyro, accel):
     s.enable(timestep)
 
+# LD2451-style corner radars (front pair aimed forward, rear pair aft). Enabled
+# for reporting only - not yet fed into ArduPilot. getTargets() returns moving
+# objects that have a radarCrossSection (e.g. the "target_car").
+radars = []
+for rname in ("radar_fl", "radar_fr", "radar_rl", "radar_rr"):
+    dev = robot.getDevice(rname)
+    if dev is not None:
+        dev.enable(timestep)
+        radars.append((rname, dev))
+
+_next_radar_log = 0.0
+
+
+def report_radar():
+    """Print any radar targets, throttled to ~2 Hz (distance/azimuth/speed)."""
+    global _next_radar_log
+    now = robot.getTime()
+    if now < _next_radar_log:
+        return
+    _next_radar_log = now + 0.5
+    hits = []
+    for rname, dev in radars:
+        for t in dev.getTargets():
+            hits.append(f"{rname}: {t.distance:.1f} m  "
+                        f"{math.degrees(t.azimuth):+.0f} deg  {t.speed:+.1f} m/s")
+    if hits:
+        print("[radar] " + " | ".join(hits))
+        sys.stdout.flush()
+
 
 def ackermann(speed, steer_angle):
     """Rear left/right wheel speeds for a given centre speed and steer angle."""
@@ -163,10 +192,12 @@ def main():
     sitl_addr = None
 
     # Wait for SITL to start sending, stepping Webots so the GUI stays alive.
+    # Radar still reports here, so the sensor demo works even without SITL.
     while not select.select([sock], [], [], 0)[0]:
         if robot.step(timestep) == -1:
             sock.close()
             return
+        report_radar()
 
     # Debug log (written next to this controller so it can be inspected).
     log = open("bridge_log.csv", "w")
@@ -192,6 +223,7 @@ def main():
                 handle_controls(cmd)
                 if robot.step(timestep) == -1:
                     break
+                report_radar()
 
                 now = robot.getTime()
                 if now >= next_log and _dbg:

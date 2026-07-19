@@ -1072,18 +1072,22 @@ Robot {
     }
     Radar {
       translation 0.865 0.35 -0.1
-      rotation 0 0 1 0.7854
+      rotation 0 0 1 0.349
       name "radar_fl"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation 0.865 0.35 -0.09
-      rotation 0 0 1 0.7854
+      rotation 0 0 1 0.349
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
@@ -1123,18 +1127,22 @@ Robot {
     }
     Radar {
       translation 0.865 -0.35 -0.1
-      rotation 0 0 1 -0.7854
+      rotation 0 0 1 -0.349
       name "radar_fr"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation 0.865 -0.35 -0.08
-      rotation 0 0 1 -0.7854
+      rotation 0 0 1 -0.349
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
@@ -1174,18 +1182,22 @@ Robot {
     }
     Radar {
       translation -0.865 0.35 -0.1
-      rotation 0 0 1 2.3562
+      rotation 0 0 1 2.793
       name "radar_rl"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation -0.865 0.35 -0.07
-      rotation 0 0 1 2.3562
+      rotation 0 0 1 2.793
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
@@ -1225,18 +1237,22 @@ Robot {
     }
     Radar {
       translation -0.865 -0.35 -0.1
-      rotation 0 0 1 -2.3562
+      rotation 0 0 1 -2.793
       name "radar_rr"
-      minRange 0.05
-      maxRange 8
-      horizontalFieldOfView 2.2
-      verticalFieldOfView 0.25
-      minRadialSpeed -100
-      maxRadialSpeed 100
+      # --- Hi-Link HLK-LD2451 24 GHz FMCW vehicle radar ---
+      minRange 0.5
+      maxRange 100
+      horizontalFieldOfView 0.698
+      verticalFieldOfView 0.2
+      minAbsoluteRadialSpeed 1.0
+      minRadialSpeed -33.3
+      maxRadialSpeed 33.3
+      cellDistance 0.75
+      frequency 24.0
     }
     Pose {
       translation -0.865 -0.35 -0.06
-      rotation 0 0 1 -2.3562
+      rotation 0 0 1 -2.793
       children [
         Shape {
           appearance PBRAppearance { baseColor 1 0 1 roughness 0.3 metalness 0.6 emissiveColor 0.3 0 0.3 }
