@@ -6,6 +6,28 @@
 SERVO1_FUNCTION 26     # GroundSteering  -> front steer motors
 SERVO3_FUNCTION 70     # Throttle        -> rear drive motors
 
+# --- Drive ESC: REVERSIBLE (forward AND reverse) ---
+# In SITL/Webots the bridge spins the wheel motors directly, so most of these
+# only bite on the physical rover. The SERVO3 range is kept symmetric about
+# 1500 so the bridge's "0.5 = stop" convention still holds in SITL, and reverse
+# (throttle < 1500) drives the wheels backwards.
+# NOTE: a plain airplane/drone ESC is forward-only - the real build needs a
+# reversible car ESC (fwd/brake/reverse) or a brushed bipolar driver (PWM_TYPE 4).
+MOT_PWM_TYPE    0      # 0=Normal PWM brushless ESC (3=brushed+relay, 4=brushed bipolar)
+SERVO3_MIN      1000   # full reverse
+SERVO3_MAX      2000   # full forward
+SERVO3_TRIM     1500   # NEUTRAL = stopped (must match the ESC's true neutral)
+SERVO3_REVERSED 0      # set 1 if forward/back come out swapped
+MOT_THR_MIN     5      # % throttle deadzone so tiny commands don't creep
+MOT_THR_MAX     100
+MOT_SLEWRATE    100    # %/s throttle rate limit (drivetrain protection)
+MOT_SAFE_DISARM 1      # cut PWM (not hold neutral) when disarmed
+# Reverse is a HARDWARE capability here; ArduPilot still won't back up on its
+# own (it does a forward K-turn to reach a point behind). To actually reverse,
+# command reverse "gear" with MAV_CMD_DO_SET_REVERSE (param1=1), e.g.
+#   tools/mav_ctl.py back 5      # backs up 5 m
+# In AUTO missions, insert a DO_SET_REVERSE item before the reverse leg.
+
 # Steering geometry: min turn radius ~= wheelbase / tan(max_steer)
 #   = 1.20 / tan(0.70 rad) ~= 1.42 m  (steer limit raised 0.575 -> 0.70 rad)
 TURN_RADIUS 1.42

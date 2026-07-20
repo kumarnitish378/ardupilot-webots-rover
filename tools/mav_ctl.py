@@ -98,9 +98,22 @@ def arm(m):
     return False
 
 
-def guided_goto_local(m, north, east, wait=15):
-    """Drive to a local NED offset (metres) from current position in GUIDED."""
+def set_reverse(m, reverse):
+    """Engage reverse ('gear') so Rover BACKS UP to a target instead of doing a
+    forward K-turn. Needs a reversible ESC (see rover.parm). 1=reverse, 0=fwd."""
+    m.mav.command_long_send(
+        m.target_system, m.target_component,
+        mavutil.mavlink.MAV_CMD_DO_SET_REVERSE, 0,
+        1 if reverse else 0, 0, 0, 0, 0, 0, 0)
+    time.sleep(0.3)
+    print(f"    [gear] {'REVERSE' if reverse else 'forward'}")
+
+
+def guided_goto_local(m, north, east, wait=15, reverse=False):
+    """Drive to a local NED offset (metres) from current position in GUIDED.
+    With reverse=True the rover backs up to it (throttle < neutral)."""
     set_mode(m, "GUIDED")
+    set_reverse(m, reverse)
     # type_mask: use position only (ignore vel/accel/yaw)
     m.mav.set_position_target_local_ned_send(
         0, m.target_system, m.target_component,
@@ -111,6 +124,7 @@ def guided_goto_local(m, north, east, wait=15):
         msg = m.recv_match(type="LOCAL_POSITION_NED", blocking=True, timeout=1)
         if msg:
             print(f"    pos N={msg.x:6.2f} E={msg.y:6.2f}  v={msg.vx:5.2f}")
+    set_reverse(m, False)  # always leave it in forward gear
 
 
 import math
@@ -338,7 +352,12 @@ if __name__ == "__main__":
     elif cmd == "fwdback":
         arm(mav)
         print("-> 5 m forward"); guided_goto_local(mav, 5, 0)
-        print("-> 5 m back"); guided_goto_local(mav, -5, 0)
+        # back up in REVERSE gear (not a forward turn-around)
+        print("-> 5 m back (reverse)"); guided_goto_local(mav, -5, 0, reverse=True)
+    elif cmd == "back":
+        dist = float(sys.argv[2]) if len(sys.argv) > 2 else 5.0
+        arm(mav)
+        print(f"-> {dist} m back (reverse)"); guided_goto_local(mav, -dist, 0, reverse=True)
     elif cmd == "square":
         side = float(sys.argv[2]) if len(sys.argv) > 2 else 10.0
         run_square(mav, side)
