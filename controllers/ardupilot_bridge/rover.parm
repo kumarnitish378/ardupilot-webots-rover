@@ -22,6 +22,12 @@ MOT_THR_MIN     5      # % throttle deadzone so tiny commands don't creep
 MOT_THR_MAX     100
 MOT_SLEWRATE    100    # %/s throttle rate limit (drivetrain protection)
 MOT_SAFE_DISARM 1      # cut PWM (not hold neutral) when disarmed
+MOT_REV_DELAY   0.1    # s: neutral pause on direction change so a reversible ESC
+                       #    ARMS reverse instead of braking. ESC-DEPENDENT: set to
+                       #    your ESC's reverse-lockout time, or 0 if it needs none.
+ATC_BRAKE       1      # use reverse throttle to brake (crisper stops); already
+                       #    default-on in this build - made explicit for hardware.
+# ATC_DECEL_MAX 0      # decel limit (0 = reuse ATC_ACCEL_MAX); set to real decel if known
 # Reverse is a HARDWARE capability here; ArduPilot still won't back up on its
 # own (it does a forward K-turn to reach a point behind). To actually reverse,
 # command reverse "gear" with MAV_CMD_DO_SET_REVERSE (param1=1), e.g.
